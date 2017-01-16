@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ErrorMessages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ErrorMessage>
+    <ID>1</ID>
+    <ERROR_CODE>emptyDenumireAsigurat</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Asigurat\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>AsiguratiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>2</ID>
+    <ERROR_CODE>emptyNrAuto</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Numar Auto\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>AutoJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>3</ID>
+    <ERROR_CODE>emptySerieSasiuAuto</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Serie Sasiu Auto\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>AutoJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>4</ID>
+    <ERROR_CODE>emptyNrContract</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Numar Contract\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>ContracteJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>5</ID>
+    <ERROR_CODE>emptyDenumireStadiu</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Stadiu\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>StadiiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>6</ID>
+    <ERROR_CODE>emptyDenumireSolutie</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Solutie\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SolutiiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>7</ID>
+    <ERROR_CODE>emptyDenumireSocietate</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Societate asigurare\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SocietatiAsigurareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>8</ID>
+    <ERROR_CODE>emptyDenumireScurtaSocietate</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Scurta Societate asigurare\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SocietatiAsigurareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>9</ID>
+    <ERROR_CODE>emptyCuiSocietate</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"CUI Societate asigurare\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SocietatiAsigurareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>10</ID>
+    <ERROR_CODE>emptyNrSentinta</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Numar sentinta\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SentinteJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>11</ID>
+    <ERROR_CODE>emptyDataSentinta</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Data sentinta\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SentinteJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>    
+  <ErrorMessage>
+    <ID>12</ID>
+    <ERROR_CODE>emptySolutieSentinta</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Solutie\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SentinteJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>13</ID>
+    <ERROR_CODE>emptyDenumireIntervenient</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Intervenient\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>IntervenientiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>14</ID>
+    <ERROR_CODE>emptyDenumireNomenclator</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>NomenclatorJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>15</ID>
+    <ERROR_CODE>emptyUserName</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Nume utilizator\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>UtilizatoriJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>16</ID>
+    <ERROR_CODE>emptyUserPassword</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Parola utilizator\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>UtilizatoriJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>17</ID>
+    <ERROR_CODE>emptyDenumireDrept</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire Drept\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DrepturiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>18</ID>
+    <ERROR_CODE>emptyNumeSetare</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Nume setare\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SetariJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>19</ID>
+    <ERROR_CODE>emptyValoareSetare</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Valoare setare\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SetariJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>20</ID>
+    <ERROR_CODE>emptyNumeAction</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Nume actiune\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>ActionsJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>20</ID>
+    <ERROR_CODE>emptyAction</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Actiune\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>ActionsJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>21</ID>
+    <ERROR_CODE>emptyMessageSender</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Expeditor mesaj\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>MesajeJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>22</ID>
+    <ERROR_CODE>emptyMessageReceiver</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Destinatar mesaj\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>MesajeJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>23</ID>
+    <ERROR_CODE>emptyDenumireFisier</ERROR_CODE>
+    <ERROR_MESSAGE>Campul \"Denumire fisier\" nu poate fi gol!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DocumenteJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  
+  <ErrorMessage>
+    <ID>24</ID>
+    <ERROR_CODE>emptyAsiguratCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Asiguratul CASCO\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>25</ID>
+    <ERROR_CODE>emptyAsiguratRca</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Asiguratul RCA\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Confirm</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>26</ID>
+    <ERROR_CODE>emptyAsiguratorCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Asiguratorul CASCO\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>27</ID>
+    <ERROR_CODE>emptyAsiguratorRca</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Asiguratorul RCA\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>28</ID>
+    <ERROR_CODE>emptyNrDosarCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Numarul dosarului CASCO\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>29</ID>
+    <ERROR_CODE>emptyNrPolitaCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Numarul politei CASCO\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>30</ID>
+    <ERROR_CODE>emptyNrPolitaRca</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Numarul politei RCA\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>31</ID>
+    <ERROR_CODE>emptyAutoCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Autoturismul CASCO\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>32</ID>
+    <ERROR_CODE>emptyAutoRca</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Autoturismul RCA\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Confirm</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>33</ID>
+    <ERROR_CODE>emptyValoareDauna</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Valoarea daunei\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>34</ID>
+    <ERROR_CODE>emptyValoareRegres</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Valoarea de regres\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>35</ID>
+    <ERROR_CODE>emptyMessageSubject</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Subiectul mesajului\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>MesajeJson</ERROR_OBJECT>
+    <ERROR_TYPE>Confirm</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>36</ID>
+    <ERROR_CODE>emptyMessageBody</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati introdus \"Continutul mesajului\"!</ERROR_MESSAGE>
+    <ERROR_OBJECT>MesajeJson</ERROR_OBJECT>
+    <ERROR_TYPE>Confirm</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>37</ID>
+    <ERROR_CODE>couldNotInsertAsiguratCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Asiguratului CASCO!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>38</ID>
+    <ERROR_CODE>couldNotInsertAsiguratRca</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Asiguratului RCA!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>39</ID>
+    <ERROR_CODE>couldNotInsertAsiguratorCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Asiguratorului CASCO!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>40</ID>
+    <ERROR_CODE>couldNotInsertAsiguratorRca</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Asiguratorului RCA!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>41</ID>
+    <ERROR_CODE>couldNotInsertAutoCasco</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Autoturismului CASCO!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>42</ID>
+    <ERROR_CODE>couldNotInsertAutoRca</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Autoturismului RCA!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Confirm</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>43</ID>
+    <ERROR_CODE>couldNotInsertIntervenient</ERROR_CODE>
+    <ERROR_MESSAGE>Eroare la salvarea Intervenientului!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Confirm</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>44</ID>
+    <ERROR_CODE>dosarExistent</ERROR_CODE>
+    <ERROR_MESSAGE>Dosar existent in baza de date!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>45</ID>
+    <ERROR_CODE>campInexistentInTabela</ERROR_CODE>
+    <ERROR_MESSAGE>Camp inexistent in tabela!</ERROR_MESSAGE>
+    <ERROR_OBJECT></ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>46</ID>
+    <ERROR_CODE>cannotConvertStringToTableColumns</ERROR_CODE>
+    <ERROR_MESSAGE>Nu am putut converti stringul in campuri din tabela!</ERROR_MESSAGE>
+    <ERROR_OBJECT></ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+</ErrorMessages>

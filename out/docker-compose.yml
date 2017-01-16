@@ -1,0 +1,41 @@
+version: "2"
+
+services:
+  db_server:
+    image: mysql:5.7
+    container_name: db_server
+    ports: 
+      - "6603:3306"
+    volumes:
+      - test-data:/var/lib/mysql
+    environment:
+       MYSQL_ROOT_PASSWORD: scasca 
+       MYSQL_DATABASE: socisa
+    networks:
+      - back-tier
+
+  redis_server:
+    image: redis:alpine
+    container_name: redis_server
+    ports: ["6379:6379"]
+    networks:
+      - back-tier
+      
+  worker:
+    container_name: socisa_worker
+    depends_on: 
+      - db_server
+      - redis_server
+    build: .
+    links:
+      - db_server
+    networks:
+      - back-tier
+
+
+
+volumes:
+  test-data:
+
+networks:
+  back-tier:

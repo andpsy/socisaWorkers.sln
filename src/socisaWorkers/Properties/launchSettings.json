@@ -1,7 +1,8 @@
 {
   "profiles": {
     "socisaWorkers": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--command-predicate=GetChildrens --command-object-repository=DosareRepository --command-arguments=1***procese"
     }
   }
 }

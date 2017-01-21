@@ -82,16 +82,26 @@ namespace socisaWorkers
                 try
                 {
                     redis = OpenRedisConnection("redis_server").GetDatabase();
+                    //IPAddress ip = IPAddress.Parse("172.18.0.3");
+                    //redis = OpenRedisConnection(ip).GetDatabase();
                 }
-                catch { }
+                catch(Exception exp) {
+                    Console.Error.Write(exp.ToString());
+                    Console.Error.Write("\r\n------------------------------------------------------\r\n");
+                }
                 //now start listening to Redis
                 while (true)
                 {
                     string Command = "";
                     if (redis != null)
-                        Command = redis.ListLeftPopAsync("Commands").Result;
+                    {
+                        Command = redis.ListRightPopAsync("Commands").Result;
+                        //redis.ListLeftPopAsync("Commands").Result;
+                    }
                     else
+                    {
                         Command = String.Join(" ", args); // for local testing!
+                    }
 
                     if (Command != null && Command != "")
                     {
@@ -176,12 +186,26 @@ namespace socisaWorkers
                                                     if (prop.Name == "connectionString")
                                                         prop.SetValue(tmpParam, MySqlConnectionString);
                                                 }
+                                                FieldInfo[] fis = tmpParam.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                                                foreach (FieldInfo fi in fis)
+                                                {
+                                                    try
+                                                    {
+                                                        if (fi.Name.IndexOf("authenticatedUserId") > -1)
+                                                            fi.SetValue(tmpParam, Convert.ToInt32(AuthenticatedUserId));
+                                                        if (fi.Name.IndexOf("connectionString") > -1)
+                                                            fi.SetValue(tmpParam, MySqlConnectionString);
+                                                    }
+                                                    catch (Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
+                                                }
                                             }
-                                            catch { }
+                                            catch(Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
                                             lArgs.Add(tmpParam);
                                         }
                                     }
                                 }
+
+
                                 /*
                                 var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
                                 try
@@ -195,7 +219,9 @@ namespace socisaWorkers
                                 */
                                 //dynamic r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
                                 var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                Console.Error.Write(JsonConvert.SerializeObject(r));
+                                string toReturn = JsonConvert.SerializeObject(r);
+                                Console.Error.Write(toReturn);
+                                redis.ListRightPushAsync("Results", toReturn);
                             }
                             catch (Exception exp)
                             {
@@ -221,22 +247,40 @@ namespace socisaWorkers
             {
                 if (arg.ToLower().IndexOf("host") > -1) DbHost = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("port") > -1) DbPort = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated-user-id") < 0) DbUser = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user_id") < 0 && arg.ToLower().IndexOf("authenticated-user-id") < 0) DbUser = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("database") > -1) DbDataBase = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("password") > -1) DbPassword = arg.Split('=')[1];
 
-                if (arg.ToLower().IndexOf("command-predicate") > -1) CommandPredicate = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("command-object-repository") > -1) CommandObjectRepository = arg.Split('=')[1];
-                //if (arg.ToLower().IndexOf("command-arguments") > -1) CommandArguments = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("command-arguments") > -1) CommandArguments = arg.Replace("--command-arguments=", "");
-                if (arg.ToLower().IndexOf("authenticated-user-id") > -1) AuthenticatedUserId = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("command-predicate") > -1 || arg.ToLower().IndexOf("command_predicate") > -1) CommandPredicate = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("command-object-repository") > -1 || arg.ToLower().IndexOf("command_object_repository") > -1) CommandObjectRepository = arg.Split('=')[1];
+                //if (arg.ToLower().IndexOf("command_arguments") > -1) CommandArguments = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("command-arguments") > -1 || arg.ToLower().IndexOf("command_arguments") > -1) CommandArguments = arg.Replace("--command_arguments=", "").Replace("--command-arguments=", "");
+                    ;
+                if (arg.ToLower().IndexOf("authenticated-user-id") > -1 || arg.ToLower().IndexOf("authenticated_user_id") > -1) AuthenticatedUserId = arg.Split('=')[1];
             }
         }
 
         private static void GenerateParameters(string Command)
         {
-            string[] args = Command.Split(' ');
-            GenerateParameters(args);
+            try
+            {
+                dynamic jParams = JsonConvert.DeserializeObject(Command);
+                try { DbHost = jParams.host; } catch { }
+                try { DbPort = jParams.port; } catch { }
+                try { DbDataBase = jParams.database; } catch { }
+                try { DbUser = jParams.user; } catch { }
+                try { DbPassword = jParams.password; } catch { }
+                try { AuthenticatedUserId = jParams.authenticated_user_id; } catch { }
+
+                try { CommandPredicate = jParams.command_predicate; } catch { }
+                try { CommandObjectRepository = jParams.command_object_repository; } catch { }
+                try { CommandArguments = jParams.command_arguments; } catch { }
+            }
+            catch
+            {
+                string[] args = Command.Split(' ');
+                GenerateParameters(args);
+            }
         }
 
         private static string GetIp(string hostname)
@@ -277,6 +321,24 @@ namespace socisaWorkers
             }
         }
 
+        private static ConnectionMultiplexer OpenRedisConnection(IPAddress ip)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.Error.WriteLine("Connected to redis");
+                    return ConnectionMultiplexer.Connect(ip.ToString());
+                }
+                catch (RedisConnectionException rexp)
+                {
+                    Console.Error.Write(rexp.ToString() + "\r\n");
+                    Console.Error.WriteLine("Waiting for redis\r\n");
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
         #region Test
         /*
         private static void Test(string[] args)
@@ -290,7 +352,7 @@ namespace socisaWorkers
             {
                 if (arg.ToLower().IndexOf("host") > -1) DbHost = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("port") > -1) DbPort = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated-user-id") < 0) DbUser = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user_id") < 0) DbUser = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("database") > -1) DbDataBase = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("password") > -1) DbPassword = arg.Split('=')[1];
 

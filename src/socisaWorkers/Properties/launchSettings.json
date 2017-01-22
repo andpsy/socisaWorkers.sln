@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "--command-predicate=GetChildrens --command-object-repository=DosareRepository --command-arguments=1***procese"
+      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"Delete\\\",\\\"command_object_repository\\\":\\\"DocumenteScanateRepository\\\",\\\"command_arguments\\\":\\\"24\\\"}\""
     }
   }
 }

@@ -9,8 +9,8 @@
       "type": "platform",
       "version": "1.0.1"
     },
-    "Newtonsoft.Json": "9.0.2-beta1",
-    "socisaDll": "1.0.11-beta",
+    "Newtonsoft.Json": "9.0.2-beta2",
+    "socisaDll": "1.0.2-beta3",
     "StackExchange.Redis": "1.2.0"
   },
 

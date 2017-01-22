@@ -13,6 +13,7 @@ using System.Threading;
 using Microsoft.CSharp.RuntimeBinder;
 using System.Dynamic;
 using SOCISA.Models;
+using Newtonsoft.Json.Linq;
 //using MySql.Data.MySqlClient;
 //using System.Data;
 //using Xfinium.Pdf;
@@ -74,7 +75,12 @@ namespace socisaWorkers
             try
             {
                 if (args.Length > 0)
-                    GenerateParameters(args);
+                {
+                    if (args.Length == 1)
+                        GenerateParameters(args[0]);
+                    else
+                        GenerateParameters(args);
+                }
                 if (DbDataBase != "" && DbUser != "" && DbPassword != "")
                     MySqlConnectionString = String.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4};", DbHost, DbPort, DbDataBase, DbUser, DbPassword);
 
@@ -166,7 +172,7 @@ namespace socisaWorkers
 
                                 ParameterInfo[] pis = methodToRun.GetParameters();
                                 ArrayList lArgs = new ArrayList();
-                                if (CommandArguments != "")
+                                if (CommandArguments != "" && CommandArguments != null)
                                 {
                                     string[] sArgs = CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                                     if (pis.Length == sArgs.Length)
@@ -204,7 +210,6 @@ namespace socisaWorkers
                                         }
                                     }
                                 }
-
 
                                 /*
                                 var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
@@ -265,18 +270,18 @@ namespace socisaWorkers
             try
             {
                 dynamic jParams = JsonConvert.DeserializeObject(Command);
-                try { DbHost = jParams.host; } catch { }
-                try { DbPort = jParams.port; } catch { }
-                try { DbDataBase = jParams.database; } catch { }
-                try { DbUser = jParams.user; } catch { }
-                try { DbPassword = jParams.password; } catch { }
-                try { AuthenticatedUserId = jParams.authenticated_user_id; } catch { }
+                try { if(jParams.host != null) DbHost = jParams.host; } catch { }
+                try { if (jParams.port != null) DbPort = jParams.port; } catch { }
+                try { if (jParams.database != null) DbDataBase = jParams.database; } catch { }
+                try { if (jParams.user != null) DbUser = jParams.user; } catch { }
+                try { if (jParams.password != null) DbPassword = jParams.password; } catch { }
+                try { if (jParams.authenticated_user_id != null) AuthenticatedUserId = jParams.authenticated_user_id; } catch { }
 
                 try { CommandPredicate = jParams.command_predicate; } catch { }
                 try { CommandObjectRepository = jParams.command_object_repository; } catch { }
                 try { CommandArguments = jParams.command_arguments; } catch { }
             }
-            catch
+            catch(Exception exp)
             {
                 string[] args = Command.Split(' ');
                 GenerateParameters(args);

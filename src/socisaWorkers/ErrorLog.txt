@@ -71,3 +71,29 @@ MySql.Data.MySqlClient.MySqlException: Table 'socisa.ACTIONS' doesn't exist
    at SOCISA.DataAccess.ExecuteSelectQuery()
    at SOCISA.Models.ActionsRepository.GetAll()
 =====================================================
+MySql.Data.MySqlClient.MySqlException: Unable to connect to any of the specified MySQL hosts. ---> System.AggregateException: One or more errors occurred. (No connection could be made because the target machine actively refused it 127.0.0.1:6603) ---> System.Net.Internals.SocketExceptionFactory+ExtendedSocketException: No connection could be made because the target machine actively refused it 127.0.0.1:6603
+   at System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.<>c.<ConnectAsyncCore>b__62_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at MySql.Data.Common.StreamCreator.GetTcpStream(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   --- End of inner exception stack trace ---
+   at SOCISA.DataAccess..ctor(Object _authenticated_user_id, String _connectionString, CommandType _commandType, String _commandText, Object[] _commandParameters)
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER like '5%')  ORDER BY  A.NAME' at line 1
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER like '5%')  ORDER BY  A.NAME' at line 1
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER like '5%')  ORDER BY  A.NAME' at line 1
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
+=====================================================

@@ -35,6 +35,9 @@ namespace socisaWorkers
         static string CommandObjectRepository = "";
         static string CommandArguments = "";
         static string CommandArgumentsSeparator = "***";
+        static string RedisClientId = "";
+        static string ScansFolder = "scans";
+        static string PdfsFolder = "pdf";
         static Dictionary<string, string> FullyQualifiedNames = new Dictionary<string, string>();
 
         public static void Main(string[] args)
@@ -66,6 +69,8 @@ namespace socisaWorkers
             dynamic result = JsonConvert.DeserializeObject(settings);
             string MySqlConnectionString = result.MySqlConnectionString;
             ThumbNailSizes[] tSizes = JsonConvert.DeserializeObject<ThumbNailSizes[]>(result.ThumbNailSizes.ToString());
+            ScansFolder = result.ScansFolder;
+            PdfsFolder = result.PdfsFolder;
             /* ****************************************************** */
 
             Console.Error.WriteLine(MySqlConnectionString);
@@ -226,7 +231,8 @@ namespace socisaWorkers
                                 var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
                                 string toReturn = JsonConvert.SerializeObject(r);
                                 Console.Error.Write(toReturn);
-                                redis.ListRightPushAsync("Results", toReturn);
+                                //redis.ListRightPushAsync("Results", toReturn);
+                                redis.ListRightPushAsync(RedisClientId, toReturn);
                             }
                             catch (Exception exp)
                             {
@@ -262,6 +268,7 @@ namespace socisaWorkers
                 if (arg.ToLower().IndexOf("command-arguments") > -1 || arg.ToLower().IndexOf("command_arguments") > -1) CommandArguments = arg.Replace("--command_arguments=", "").Replace("--command-arguments=", "");
                     ;
                 if (arg.ToLower().IndexOf("authenticated-user-id") > -1 || arg.ToLower().IndexOf("authenticated_user_id") > -1) AuthenticatedUserId = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("redis-client-id") > -1 || arg.ToLower().IndexOf("redis_client_id") > -1) RedisClientId = arg.Split('=')[1];
             }
         }
 
@@ -280,8 +287,9 @@ namespace socisaWorkers
                 try { CommandPredicate = jParams.command_predicate; } catch { }
                 try { CommandObjectRepository = jParams.command_object_repository; } catch { }
                 try { CommandArguments = jParams.command_arguments; } catch { }
+                try { RedisClientId = jParams.redis_client_id; } catch { }
             }
-            catch(Exception exp)
+            catch (Exception exp)
             {
                 string[] args = Command.Split(' ');
                 GenerateParameters(args);

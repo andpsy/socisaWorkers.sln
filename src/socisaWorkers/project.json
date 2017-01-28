@@ -10,7 +10,7 @@
       "version": "1.0.1"
     },
     "Newtonsoft.Json": "9.0.2-beta2",
-    "socisaDll": "1.0.2-beta3",
+    "socisaDll": "1.1.0-beta6",
     "StackExchange.Redis": "1.2.0"
   },
 

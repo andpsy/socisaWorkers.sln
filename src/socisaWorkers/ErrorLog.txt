@@ -97,3 +97,25 @@ MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; che
    at SOCISA.DataAccess.ExecuteSelectQuery()
    at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
 =====================================================
+MySql.Data.MySqlClient.MySqlException: Unable to connect to any of the specified MySQL hosts. ---> System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Diagnostics.Debugger.CustomNotification(ICustomDebuggerNotification data)
+   at System.Diagnostics.Debugger.NotifyOfCrossThreadDependencySlow()
+   at System.Diagnostics.Debugger.NotifyOfCrossThreadDependency()
+   at System.Threading.Tasks.Task.InternalWait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at MySql.Data.Common.StreamCreator.GetTcpStream(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   --- End of inner exception stack trace ---
+   at SOCISA.DataAccess..ctor(Object _authenticated_user_id, String _connectionString, CommandType _commandType, String _commandText, Object[] _commandParameters)
+   at SOCISA.Models.DocumentScanat..ctor(Int32 _authenticatedUserId, String _connectionString, Int32 _ID)
+   at SOCISA.Models.DocumenteScanateRepository.Find(Int32 _id)
+=====================================================
+System.IO.FileNotFoundException: Could not find file 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\test.jpg'.
+File name: 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\test.jpg'
+   at System.IO.Win32FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, FileStream parent)
+   at System.IO.Win32FileSystem.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, FileStream parent)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options)
+   at System.IO.File.Open(String path, FileMode mode, FileAccess access)
+   at SOCISA.FileManager.UploadFile(String filePath)
+   at SOCISA.Models.DocumentScanat.Insert()
+=====================================================

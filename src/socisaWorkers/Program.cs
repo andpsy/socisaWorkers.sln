@@ -116,8 +116,8 @@ namespace socisaWorkers
 
                     if (Command != null && Command != "")
                     {
-                        Console.Error.Write("Got Redis command: " + Command);
-                        Console.Error.Write("\r\n\tPredicate: " + CommandPredicate + "\r\n\tRepository: " + CommandObjectRepository + "\r\n\tArguments: " + CommandArguments);
+                        Console.Error.Write("\r\nGot Redis command: " + Command);
+                        Console.Error.Write("\r\n\tRedisClientId: " + RedisClientId + "\r\n\tPredicate: " + CommandPredicate + "\r\n\tRepository: " + CommandObjectRepository + "\r\n\tArguments: " + CommandArguments);
                         Console.Error.Write("\r\n=====================================================\r\n");
 
                         GenerateParameters(Command);
@@ -154,7 +154,24 @@ namespace socisaWorkers
                                                     T = pInfos[i].ParameterType;
                                                     try
                                                     {
+                                                        /*
+                                                        JsonSerializerSettings S = new JsonSerializerSettings();
+                                                        S.StringEscapeHandling = StringEscapeHandling.Default;
+                                                        S.ObjectCreationHandling = ObjectCreationHandling.Auto;
+                                                        S.MissingMemberHandling = MissingMemberHandling.Error;
+                                                        S.MetadataPropertyHandling = MetadataPropertyHandling.Default;
+                                                        S.PreserveReferencesHandling = PreserveReferencesHandling.All;
+                                                        S.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full;                                                        
+                                                        var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
+                                                        */
                                                         var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
+
+                                                        //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
+                                                        if(JObject.Parse(sArgs[i]).Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
+                                                            && CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
+                                                        {
+                                                            throw new Exception("invalidCastException");
+                                                        }
                                                     }
                                                     catch
                                                     {
@@ -266,7 +283,7 @@ namespace socisaWorkers
                 if (arg.ToLower().IndexOf("command-object-repository") > -1 || arg.ToLower().IndexOf("command_object_repository") > -1) CommandObjectRepository = arg.Split('=')[1];
                 //if (arg.ToLower().IndexOf("command_arguments") > -1) CommandArguments = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("command-arguments") > -1 || arg.ToLower().IndexOf("command_arguments") > -1) CommandArguments = arg.Replace("--command_arguments=", "").Replace("--command-arguments=", "");
-                    ;
+
                 if (arg.ToLower().IndexOf("authenticated-user-id") > -1 || arg.ToLower().IndexOf("authenticated_user_id") > -1) AuthenticatedUserId = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("redis-client-id") > -1 || arg.ToLower().IndexOf("redis_client_id") > -1) RedisClientId = arg.Split('=')[1];
             }

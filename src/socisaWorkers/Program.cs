@@ -29,7 +29,7 @@ namespace socisaWorkers
         static string DbUser = "";
         static string DbPassword = "";
         static string AuthenticatedUserId = "1"; // !!!!! to change after authentication is implemented
-        static string ConnectionString;
+        //static string ConnectionString;
 
         static string CommandPredicate = "";
         static string CommandObjectRepository = "";
@@ -165,9 +165,13 @@ namespace socisaWorkers
                                                         var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
                                                         */
                                                         var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
-
+                                                        JObject jObj = null;
+                                                        try
+                                                        {
+                                                            jObj = JObject.Parse(sArgs[i]);
+                                                        }catch { }
                                                         //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
-                                                        if(JObject.Parse(sArgs[i]).Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
+                                                        if (jObj != null && jObj.Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
                                                             && CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
                                                         {
                                                             throw new Exception("invalidCastException");
@@ -306,7 +310,7 @@ namespace socisaWorkers
                 try { CommandArguments = jParams.command_arguments; } catch { }
                 try { RedisClientId = jParams.redis_client_id; } catch { }
             }
-            catch (Exception exp)
+            catch
             {
                 string[] args = Command.Split(' ');
                 GenerateParameters(args);

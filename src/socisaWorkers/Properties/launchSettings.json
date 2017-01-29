@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"Insert\\\",\\\"command_object_repository\\\":\\\"DocumenteScanateRepository\\\",\\\"command_arguments\\\":\\\"{'DENUMIRE_FISIER':'test.jpg','EXTENSIE_FISIER':'.jpg','DATA_INCARCARE':'2017-01-22 22:30:00','DIMENSIUNE_FISIER':'1024','ID_TIP_DOCUMENT':1,'ID_DOSAR':1,'DETALII':'test proces verbal','VIZA_CASCO':0,'FILE_CONTENT':null,'SMALL_ICON':null,'MEDIUM_ICON':null,'CALE_FISIER':'test.jpg'}\\\"}\""
+      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"ExportDosarCompletToPdf\\\",\\\"command_object_repository\\\":\\\"DosareRepository\\\",\\\"command_arguments\\\":\\\"1\\\"}\""
     }
   }
 }

@@ -1,0 +1,207 @@
+MySql.Data.MySqlClient.MySqlException: Unable to connect to any of the specified MySQL hosts. ---> System.AggregateException: One or more errors occurred. (No such host is known) ---> System.Net.Sockets.SocketException: No such host is known
+   at System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.<>c.<ConnectAsyncCore>b__62_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at MySql.Data.Common.StreamCreator.GetTcpStream(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   --- End of inner exception stack trace ---
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   at MySql.Data.MySqlClient.Driver.Open()
+   at MySql.Data.MySqlClient.Driver.Create(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.MySqlPool.CreateNewPooledConnection()
+   at MySql.Data.MySqlClient.MySqlPool.GetPooledConnection()
+   at MySql.Data.MySqlClient.MySqlPool.TryToGetDriver()
+   at MySql.Data.MySqlClient.MySqlPool.GetConnection()
+   at MySql.Data.MySqlClient.MySqlConnection.Open()
+   at SOCISA.DataAccess..ctor(Object _authenticated_user_id, String _connectionString, CommandType _commandType, String _commandText, Object[] _commandParameters)
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+MySql.Data.MySqlClient.MySqlException: Unable to connect to any of the specified MySQL hosts. ---> System.AggregateException: One or more errors occurred. (No such host is known) ---> System.Net.Sockets.SocketException: No such host is known
+   at System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.<>c.<ConnectAsyncCore>b__62_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at MySql.Data.Common.StreamCreator.GetTcpStream(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   --- End of inner exception stack trace ---
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   at MySql.Data.MySqlClient.Driver.Open()
+   at MySql.Data.MySqlClient.Driver.Create(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.MySqlPool.CreateNewPooledConnection()
+   at MySql.Data.MySqlClient.MySqlPool.GetPooledConnection()
+   at MySql.Data.MySqlClient.MySqlPool.TryToGetDriver()
+   at MySql.Data.MySqlClient.MySqlPool.GetConnection()
+   at MySql.Data.MySqlClient.MySqlConnection.Open()
+   at SOCISA.DataAccess..ctor(Object _authenticated_user_id, String _connectionString, CommandType _commandType, String _commandText, Object[] _commandParameters)
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You must reset your password using ALTER USER statement before executing this statement.
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+MySql.Data.MySqlClient.MySqlException: Table 'socisa.ACTIONS' doesn't exist
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+MySql.Data.MySqlClient.MySqlException: Unable to connect to any of the specified MySQL hosts. ---> System.AggregateException: One or more errors occurred. (No connection could be made because the target machine actively refused it 127.0.0.1:6603) ---> System.Net.Internals.SocketExceptionFactory+ExtendedSocketException: No connection could be made because the target machine actively refused it 127.0.0.1:6603
+   at System.Net.Sockets.Socket.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.EndConnect(IAsyncResult asyncResult)
+   at System.Net.Sockets.TcpClient.<>c.<ConnectAsyncCore>b__62_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at MySql.Data.Common.StreamCreator.GetTcpStream(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   --- End of inner exception stack trace ---
+   at SOCISA.DataAccess..ctor(Object _authenticated_user_id, String _connectionString, CommandType _commandType, String _commandText, Object[] _commandParameters)
+   at SOCISA.Models.ActionsRepository.GetAll()
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER like '5%')  ORDER BY  A.NAME' at line 1
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER like '5%')  ORDER BY  A.NAME' at line 1
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
+=====================================================
+MySql.Data.MySqlClient.MySqlException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER like '5%')  ORDER BY  A.NAME' at line 1
+   at SOCISA.DataAccess.ExecuteSelectQuery()
+   at SOCISA.Models.ActionsRepository.GetFiltered(String _sort, String _order, String _filter, String _limit)
+=====================================================
+MySql.Data.MySqlClient.MySqlException: Unable to connect to any of the specified MySQL hosts. ---> System.Threading.ThreadAbortException: Thread was being aborted.
+   at System.Diagnostics.Debugger.CustomNotification(ICustomDebuggerNotification data)
+   at System.Diagnostics.Debugger.NotifyOfCrossThreadDependencySlow()
+   at System.Diagnostics.Debugger.NotifyOfCrossThreadDependency()
+   at System.Threading.Tasks.Task.InternalWait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at MySql.Data.Common.StreamCreator.GetTcpStream(MySqlConnectionStringBuilder settings)
+   at MySql.Data.MySqlClient.NativeDriver.Open()
+   --- End of inner exception stack trace ---
+   at SOCISA.DataAccess..ctor(Object _authenticated_user_id, String _connectionString, CommandType _commandType, String _commandText, Object[] _commandParameters)
+   at SOCISA.Models.DocumentScanat..ctor(Int32 _authenticatedUserId, String _connectionString, Int32 _ID)
+   at SOCISA.Models.DocumenteScanateRepository.Find(Int32 _id)
+=====================================================
+System.IO.FileNotFoundException: Could not find file 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\test.jpg'.
+File name: 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\test.jpg'
+   at System.IO.Win32FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, FileStream parent)
+   at System.IO.Win32FileSystem.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, FileStream parent)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options)
+   at System.IO.File.Open(String path, FileMode mode, FileAccess access)
+   at SOCISA.FileManager.UploadFile(String filePath)
+   at SOCISA.Models.DocumentScanat.Insert()
+=====================================================
+System.IO.IOException: The process cannot access the file 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\bin\Debug\netcoreapp1.0\scans\metallica.png' because it is being used by another process.
+   at System.IO.Win32FileSystem.DeleteFile(String fullPath)
+   at System.IO.File.Delete(String path)
+   at SOCISA.ThumbNails.GenerateImgThumbNail(String sType, String path, String fileName, Int32 width, Int32 height)
+=====================================================
+System.IO.IOException: The process cannot access the file 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\bin\Debug\netcoreapp1.0\scans\metallica.png' because it is being used by another process.
+   at System.IO.Win32FileSystem.DeleteFile(String fullPath)
+   at System.IO.File.Delete(String path)
+   at SOCISA.ThumbNails.GenerateImgThumbNail(String sType, String path, String fileName, Int32 width, Int32 height)
+=====================================================
+System.IO.IOException: The process cannot access the file 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\bin\Debug\netcoreapp1.0\scans\metallica.png' because it is being used by another process.
+   at System.IO.Win32FileSystem.DeleteFile(String fullPath)
+   at System.IO.File.Delete(String path)
+   at SOCISA.ThumbNails.GenerateImgThumbNail(String sType, String path, String fileName, Int32 width, Int32 height)
+=====================================================
+System.IO.IOException: The process cannot access the file 'C:\Users\AndreiLiviu\Documents\Visual Studio 2015\Projects\socisaWorkers\src\socisaWorkers\bin\Debug\netcoreapp1.0\scans\metallica.png' because it is being used by another process.
+   at System.IO.Win32FileSystem.DeleteFile(String fullPath)
+   at System.IO.File.Delete(String path)
+   at SOCISA.ThumbNails.GenerateImgThumbNail(String sType, String path, String fileName, Int32 width, Int32 height)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentOutOfRangeException: Width cannot be less than or equal to zero.
+Parameter name: Width
+   at Xfinium.Pdf.Graphics.PdfJpegImage.set_Width(Int32 value)
+   at Xfinium.Pdf.Graphics.PdfJpegImage.JoinMethod(Stream dataID)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================
+System.ArgumentNullException: Buffer cannot be null.
+Parameter name: buffer
+   at System.IO.MemoryStream..ctor(Byte[] buffer, Boolean writable)
+   at SOCISA.PdfGenerator.ExportDocumenteDosarToPdf(Dosar dosar)
+=====================================================

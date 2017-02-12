@@ -21,60 +21,21 @@ using Newtonsoft.Json.Linq;
 
 namespace socisaWorkers
 {
-    public struct ParametersResponse
+    public class ProgramPubSus
     {
-        public string DbHost { get; set; }
-        public string DbPort { get; set; }
-        public string DbDataBase { get; set; }
-        public string DbUser { get; set; }
-        public string DbPassword { get; set; }
-        public string MessageId { get; set; }
-        public string CorrelationId { get; set; }
-        public string RedisClientId { get; set; }
-        public string AuthenticatedUserId { get; set; }
-        public string CommandPredicate { get; set; }
-        public string CommandObjectRepository { get; set; }
-        public string CommandArguments { get; set; }
-    }
-
-    public class NewResponse : response
-    {
-        public string MessageId { get; set; }
-        public string CorrelationId { get; set; }
-        public string RedisClientId { get; set; }
-
-        public NewResponse(response r)
-        {
-            this.Message = r.Message;
-            this.Result = r.Result;
-            this.InsertedId = r.InsertedId;
-            this.Error = r.Error;
-        }
-    }
-    public class Program
-    {
-        /*
         static string DbHost = "localhost";
         static string DbPort = "6603";
         static string DbDataBase = "";
         static string DbUser = "";
         static string DbPassword = "";
-        static string AuthenticatedUserId = "1"; // !!!!! to change after authentication is implemented
-        //static string ConnectionString;
 
-        static string CommandPredicate = "";
-        static string CommandObjectRepository = "";
-        static string CommandArguments = "";
-        static string RedisClientId = "";
-        static string MessageId = "";
-        static string CorrelationId = "";
-        */
         static string CommandArgumentsSeparator = "***";
         static string ScansFolder = "scans";
         static string PdfsFolder = "pdf";
+
         static Dictionary<string, string> FullyQualifiedNames = new Dictionary<string, string>();
 
-        public static void Main(string[] args)
+        public static void MainPubSub(string[] args)
         {
             /* *****************************************************
              * deoarece toate definitile tabelelor se afla in libraria externa "socisaDll" ca sa folosim Activator-ul pt. ele 
@@ -113,212 +74,198 @@ namespace socisaWorkers
             //Console.Error.Write("\r\n=====================================================\r\n");
             try
             {
-                ParametersResponse pr = new ParametersResponse();
                 if (args.Length > 0)
                 {
                     if (args.Length == 1)
-                        pr = GenerateParameters(args[0]);
+                        GenerateParameters(args[0]);
                     else
-                        pr = GenerateParameters(args);
+                        GenerateParameters(args);
                 }
-                if ((pr.DbDataBase != null && pr.DbDataBase != "") && (pr.DbUser != null && pr.DbUser != "") && (pr.DbPassword != null && pr.DbPassword != ""))
-                    MySqlConnectionString = String.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4};", pr.DbHost, pr.DbPort, pr.DbDataBase, pr.DbUser, pr.DbPassword);
+                if (DbDataBase != "" && DbUser != "" && DbPassword != "")
+                    MySqlConnectionString = String.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4};", DbHost, DbPort, DbDataBase, DbUser, DbPassword);
 
-                IDatabase redis = null;
                 try
                 {
                     ConnectionMultiplexer redisCon = OpenRedisConnection("redis_server");
-                    redis = redisCon.GetDatabase();
 
-                    //IPAddress ip = IPAddress.Parse("172.18.0.3");
-                    //redis = OpenRedisConnection(ip).GetDatabase();
-                }
-                catch(Exception exp) {
-                    Console.Error.Write(exp.ToString());
-                    Console.Error.Write("\r\n------------------------------------------------------\r\n");
-                }
-                //now start listening to Redis
-                while (true)
-                {
-                    string Command = "";
-                    if (redis != null)
-                    {
-                        Command = redis.ListRightPopAsync("Commands").Result;
-                        //redis.ListLeftPopAsync("Commands").Result;
-                    }
-                    else
-                    {
-                        Command = String.Join(" ", args); // for local testing!
-                    }
+                    ISubscriber redisSub = redisCon.GetSubscriber();
+                    RedisChannel rc = new RedisChannel("messages", RedisChannel.PatternMode.Literal);
+                    redisSub.Subscribe(rc, (channel, message) => {
 
-                    if (Command != null && Command != "")
-                    {
-                        Console.Error.Write("\r\nGot Redis command: " + Command);
-                        pr = GenerateParameters(Command);
-                        Console.Error.Write("\r\n\tRedisClientId: " + pr.RedisClientId + "\r\n\tPredicate: " + pr.CommandPredicate + "\r\n\tRepository: " + pr.CommandObjectRepository + "\r\n\tArguments: " + pr.CommandArguments + "\r\n\tMessageId: " + pr.MessageId);
-                        Console.Error.Write("\r\n=====================================================\r\n");
-                        if (pr.CommandPredicate != "" && pr.CommandObjectRepository != "")
+                        string Command = Convert.ToString(message);
+                        if (Command != null && Command != "")
                         {
-                            try
+                        Console.Error.Write("\r\nSubscribed to channel: " + channel.ToString());
+                            Console.Error.Write("\r\nGot Redis command (message): " + Command);
+                            ParametersResponse pr = GenerateParameters(Command);
+                            Console.Error.Write("\r\n\tRedisClientId: " + pr.RedisClientId + "\r\n\tPredicate: " + pr.CommandPredicate + "\r\n\tRepository: " + pr.CommandObjectRepository + "\r\n\tArguments: " + pr.CommandArguments + "\r\n\tMessageId: " + pr.MessageId);
+                            Console.Error.Write("\r\n=====================================================\r\n");
+
+                            if (pr.CommandPredicate != "" && pr.CommandObjectRepository != "")
                             {
-                                if(pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "")) // unauthorized user
-                                {
-                                    Console.Write("\r\nUtilizator neautentificat!\r\n");
-                                    if (redis != null) {
-                                        Error err = ErrorParser.ErrorMessage("unauthorisedUser");
-                                        response rt = new response(false, err.ERROR_MESSAGE, null, null, new List<Error>() { err });
-                                        NewResponse nrt = new NewResponse(rt);
-                                        nrt.RedisClientId = pr.RedisClientId;
-                                        nrt.MessageId = nrt.CorrelationId = pr.MessageId;
-                                        redis.ListRightPushAsync(pr.RedisClientId, JsonConvert.SerializeObject(nrt));
-                                        return;
-                                    }
-                                }
-                                Type T = Type.GetType(FullyQualifiedNames[pr.CommandObjectRepository]);
-                                var repositoryClass = Activator.CreateInstance(T, new object[] { Convert.ToInt32(pr.AuthenticatedUserId), MySqlConnectionString });
-                                //MethodInfo mi = repositoryClass.GetType().GetMethod(CommandPredicate);
-                                //get the wright method to run:
-                                MethodInfo methodToRun = null;
                                 try
                                 {
-                                    methodToRun = repositoryClass.GetType().GetMethod(pr.CommandPredicate);
-                                    Console.Error.Write("Found Single Method: {0}.", methodToRun.Name);
-                                    Console.Error.Write("\r\n=====================================================\r\n");
-                                }
-                                catch //there are more methods with the same name, but different parameters
-                                {
+                                    if (pr.CommandPredicate != "Login" && pr.AuthenticatedUserId == null) // unauthorized user
+                                    {
+                                        Console.Error.Write("\r\nUtilizator neautentificat!\r\n");
+                                        Error err = ErrorParser.ErrorMessage("unauthorisedUser");
+                                        response rt = new response(false, err.ERROR_MESSAGE, null, null, new List<Error>() { err });
+                                        NewResponse nrtEx = new NewResponse(rt);
+                                        nrtEx.RedisClientId = pr.RedisClientId;
+                                        nrtEx.MessageId = pr.MessageId;
+                                        nrtEx.CorrelationId = pr.CorrelationId;
+
+                                        redisSub.Publish(channel, JsonConvert.SerializeObject(nrtEx));
+                                        return;
+                                    }
+                                    Type T = Type.GetType(FullyQualifiedNames[pr.CommandObjectRepository]);
+                                    var repositoryClass = Activator.CreateInstance(T, new object[] { Convert.ToInt32(pr.AuthenticatedUserId), MySqlConnectionString });
+                                    //MethodInfo mi = repositoryClass.GetType().GetMethod(CommandPredicate);
+                                    //get the wright method to run:
+                                    MethodInfo methodToRun = null;
                                     try
+                                    {
+                                        methodToRun = repositoryClass.GetType().GetMethod(pr.CommandPredicate);
+                                        Console.Error.Write("Found Single Method: {0}.", methodToRun.Name);
+                                        Console.Error.Write("\r\n=====================================================\r\n");
+                                    }
+                                    catch //there are more methods with the same name, but different parameters
+                                    {
+                                        try
+                                        {
+                                            string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                            //string[] sArgs = GenerateArguments(CommandArguments);
+                                            MethodInfo[] mis = repositoryClass.GetType().GetMethods();
+                                            foreach (MethodInfo mi in mis)
+                                            {
+                                                if (mi.Name == pr.CommandPredicate && mi.GetParameters().Length == sArgs.Length)
+                                                {
+                                                    //now we analyze the parameters types
+                                                    ParameterInfo[] pInfos = mi.GetParameters();
+                                                    int i = 0;
+                                                    while (i < pInfos.Length)
+                                                    {
+                                                        T = pInfos[i].ParameterType;
+                                                        try
+                                                        {
+                                                            /*
+                                                            JsonSerializerSettings S = new JsonSerializerSettings();
+                                                            S.StringEscapeHandling = StringEscapeHandling.Default;
+                                                            S.ObjectCreationHandling = ObjectCreationHandling.Auto;
+                                                            S.MissingMemberHandling = MissingMemberHandling.Error;
+                                                            S.MetadataPropertyHandling = MetadataPropertyHandling.Default;
+                                                            S.PreserveReferencesHandling = PreserveReferencesHandling.All;
+                                                            S.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full;                                                        
+                                                            var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
+                                                            */
+                                                            var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
+                                                            JObject jObj = null;
+                                                            try
+                                                            {
+                                                                jObj = JObject.Parse(sArgs[i]);
+                                                            }
+                                                            catch { }
+                                                            //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
+                                                            if (jObj != null && jObj.Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
+                                                                && pr.CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
+                                                            {
+                                                                throw new Exception("invalidCastException");
+                                                            }
+                                                        }
+                                                        catch
+                                                        {
+                                                            break;
+                                                        }
+                                                        i++;
+                                                    }
+                                                    if (i == pInfos.Length) //all parameters are there
+                                                    {
+                                                        Console.Error.Write("Found Multiple Methods: {0}.", mi.Name);
+                                                        Console.Error.Write("\r\n=====================================================\r\n");
+                                                        methodToRun = mi;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch { }
+                                    }
+
+                                    ParameterInfo[] pis = methodToRun.GetParameters();
+                                    ArrayList lArgs = new ArrayList();
+                                    if (pr.CommandArguments != null && pr.CommandArguments.ToString() != "")
                                     {
                                         string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                                         //string[] sArgs = GenerateArguments(CommandArguments);
-                                        MethodInfo[] mis = repositoryClass.GetType().GetMethods();
-                                        foreach (MethodInfo mi in mis)
+                                        if (pis.Length == sArgs.Length)
                                         {
-                                            if (mi.Name == pr.CommandPredicate && mi.GetParameters().Length == sArgs.Length)
+                                            for (int i = 0; i < pis.Length; i++)
                                             {
-                                                //now we analyze the parameters types
-                                                ParameterInfo[] pInfos = mi.GetParameters();
-                                                int i = 0;
-                                                while (i < pInfos.Length)
+                                                T = pis[i].ParameterType;
+
+                                                var tmpParam = (T.FullName.IndexOf("System.String") > -1 && (sArgs[i] == null || sArgs[i].ToLower() == "null")) ? null : (T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T));
+                                                try
                                                 {
-                                                    T = pInfos[i].ParameterType;
-                                                    try
+                                                    PropertyInfo[] props = tmpParam.GetType().GetProperties();
+                                                    foreach (PropertyInfo prop in props)
                                                     {
-                                                        /*
-                                                        JsonSerializerSettings S = new JsonSerializerSettings();
-                                                        S.StringEscapeHandling = StringEscapeHandling.Default;
-                                                        S.ObjectCreationHandling = ObjectCreationHandling.Auto;
-                                                        S.MissingMemberHandling = MissingMemberHandling.Error;
-                                                        S.MetadataPropertyHandling = MetadataPropertyHandling.Default;
-                                                        S.PreserveReferencesHandling = PreserveReferencesHandling.All;
-                                                        S.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full;                                                        
-                                                        var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
-                                                        */
-                                                        var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
-                                                        JObject jObj = null;
+                                                        if (prop.Name == "authenticatedUserId")
+                                                            prop.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
+                                                        if (prop.Name == "connectionString")
+                                                            prop.SetValue(tmpParam, MySqlConnectionString);
+                                                    }
+                                                    FieldInfo[] fis = tmpParam.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                                                    foreach (FieldInfo fi in fis)
+                                                    {
                                                         try
                                                         {
-                                                            jObj = JObject.Parse(sArgs[i]);
-                                                        }catch { }
-                                                        //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
-                                                        if (jObj != null && jObj.Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
-                                                            && pr.CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
-                                                        {
-                                                            throw new Exception("invalidCastException");
+                                                            if (fi.Name.IndexOf("authenticatedUserId") > -1)
+                                                                fi.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
+                                                            if (fi.Name.IndexOf("connectionString") > -1)
+                                                                fi.SetValue(tmpParam, MySqlConnectionString);
                                                         }
+                                                        catch (Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
                                                     }
-                                                    catch
-                                                    {
-                                                        break;
-                                                    }
-                                                    i++;
                                                 }
-                                                if (i == pInfos.Length) //all parameters are there
-                                                {
-                                                    Console.Error.Write("Found Multiple Methods: {0}.", mi.Name);
-                                                    Console.Error.Write("\r\n=====================================================\r\n");
-                                                    methodToRun = mi;
-                                                    break;
-                                                }
+                                                catch (Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
+                                                lArgs.Add(tmpParam);
                                             }
                                         }
                                     }
-                                    catch { }
-                                }
 
-                                ParameterInfo[] pis = methodToRun.GetParameters();
-                                ArrayList lArgs = new ArrayList();
-                                if (pr.CommandArguments != null && pr.CommandArguments.ToString() != "")
-                                {
-                                    string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                                    //string[] sArgs = GenerateArguments(CommandArguments);
-                                    if (pis.Length == sArgs.Length)
+                                    /*
+                                    var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
+                                    try
                                     {
-                                        for (int i = 0; i < pis.Length; i++)
-                                        {
-                                            T = pis[i].ParameterType;
-
-                                            var tmpParam = (T.FullName.IndexOf("System.String") > -1 && (sArgs[i] == null || sArgs[i].ToLower() == "null")) ? null : (T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T));
-                                            try
-                                            {
-                                                PropertyInfo[] props = tmpParam.GetType().GetProperties();
-                                                foreach (PropertyInfo prop in props)
-                                                {
-                                                    if (prop.Name == "authenticatedUserId")
-                                                        prop.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
-                                                    if (prop.Name == "connectionString")
-                                                        prop.SetValue(tmpParam, MySqlConnectionString);
-                                                }
-                                                FieldInfo[] fis = tmpParam.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-                                                foreach (FieldInfo fi in fis)
-                                                {
-                                                    try
-                                                    {
-                                                        if (fi.Name.IndexOf("authenticatedUserId") > -1)
-                                                            fi.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
-                                                        if (fi.Name.IndexOf("connectionString") > -1)
-                                                            fi.SetValue(tmpParam, MySqlConnectionString);
-                                                    }
-                                                    catch (Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
-                                                }
-                                            }
-                                            catch(Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
-                                            lArgs.Add(tmpParam);
-                                        }
+                                        //((IDictionary<String, Object>)r).Remove("authenticatedUserId");
+                                        //((IDictionary<String, Object>)r).Remove("connectionString");
+                                        var ret = r.FixMeUp();
+                                        Console.Error.Write(JsonConvert.SerializeObject(ret));
                                     }
+                                    catch (Exception exp) { exp.ToString(); }
+                                    */
+                                    //dynamic r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
+                                    var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
+                                    NewResponse nrt = new NewResponse((response)r);
+                                    nrt.MessageId = pr.MessageId;
+                                    nrt.CorrelationId = pr.CorrelationId;
+                                    nrt.RedisClientId = pr.RedisClientId;
+                                    string toReturn = JsonConvert.SerializeObject(nrt);
+                                    Console.Error.Write(toReturn);
+                                    redisSub.Publish(channel, toReturn);
                                 }
-
-                                /*
-                                var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                try
+                                catch (Exception exp)
                                 {
-                                    //((IDictionary<String, Object>)r).Remove("authenticatedUserId");
-                                    //((IDictionary<String, Object>)r).Remove("connectionString");
-                                    var ret = r.FixMeUp();
-                                    Console.Error.Write(JsonConvert.SerializeObject(ret));
+                                    Console.Error.Write(exp.ToString());
+                                    Console.Error.Write("\r\n=====================================================\r\n");
                                 }
-                                catch (Exception exp) { exp.ToString(); }
-                                */
-                                //dynamic r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                NewResponse nr = new NewResponse((response)r);
-                                nr.RedisClientId = pr.RedisClientId;
-                                nr.MessageId = nr.CorrelationId = pr.MessageId;
-
-                                string toReturn = JsonConvert.SerializeObject(nr);
-                                Console.Error.Write(toReturn);
-                                //redis.ListRightPushAsync("Results", toReturn);
-                                redis.ListRightPushAsync(pr.RedisClientId, toReturn);
-                            }
-                            catch (Exception exp)
-                            {
-                                Console.Error.Write(exp.ToString());
-                                Console.Error.Write("\r\n=====================================================\r\n");
                             }
                         }
-                    }
-                    if (redis == null) break;
-                    Thread.Sleep(1000);
+                    });
+                } 
+                catch(Exception exp) {
+                    Console.Error.Write(exp.ToString());
+                    Console.Error.Write("\r\n------------------------------------------------------\r\n");
                 }
             }
             catch(Exception exp) {
@@ -355,14 +302,15 @@ namespace socisaWorkers
         private static ParametersResponse GenerateParameters(string[] args)
         {
             ParametersResponse pr = new ParametersResponse();
-            pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
+            pr.AuthenticatedUserId = "1"; // to chage after Authentication implementation !!!
+
             foreach (string arg in args)
             {
-                if (arg.ToLower().IndexOf("host") > -1) pr.DbHost = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("port") > -1) pr.DbPort = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user_id") < 0 && arg.ToLower().IndexOf("authenticated-user-id") < 0) pr.DbUser = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("database") > -1) pr.DbDataBase = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("password") > -1) pr.DbPassword = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("host") > -1) DbHost = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("port") > -1) DbPort = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user_id") < 0 && arg.ToLower().IndexOf("authenticated-user-id") < 0) DbUser = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("database") > -1) DbDataBase = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("password") > -1) DbPassword = arg.Split('=')[1];
 
                 if (arg.ToLower().IndexOf("command-predicate") > -1 || arg.ToLower().IndexOf("command_predicate") > -1) pr.CommandPredicate = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("command-object-repository") > -1 || arg.ToLower().IndexOf("command_object_repository") > -1) pr.CommandObjectRepository = arg.Split('=')[1];
@@ -370,8 +318,12 @@ namespace socisaWorkers
                 if (arg.ToLower().IndexOf("command-arguments") > -1 || arg.ToLower().IndexOf("command_arguments") > -1) pr.CommandArguments = arg.Replace("--command_arguments=", "").Replace("--command-arguments=", "");
 
                 if (arg.ToLower().IndexOf("authenticated-user-id") > -1 || arg.ToLower().IndexOf("authenticated_user_id") > -1) pr.AuthenticatedUserId = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("redis-client-id") > -1 || arg.ToLower().IndexOf("redis_client_id") > -1) pr.RedisClientId = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("message-id") > -1 || arg.ToLower().IndexOf("message_id") > -1) pr.MessageId = arg.Split('=')[1];
+                //if (arg.ToLower().IndexOf("redis-client-id") > -1 || arg.ToLower().IndexOf("redis_client_id") > -1) RedisClientId = arg.Split('=')[1];
+
+                if (arg.ToLower().IndexOf("redis-client-id") > -1 || arg.ToLower().IndexOf("redis_client_id") > -1) 
+                    pr.RedisClientId = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("message-id") > -1 || arg.ToLower().IndexOf("message_id") > -1)
+                    pr.MessageId = pr.CorrelationId = arg.Split('=')[1];
             }
             return pr;
         }
@@ -379,19 +331,20 @@ namespace socisaWorkers
         private static ParametersResponse GenerateParameters(string Command)
         {
             ParametersResponse pr = new ParametersResponse();
-            pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
+            pr.AuthenticatedUserId = "1"; // to chage after Authentication implementation !!!
             try
             {
                 dynamic jParams = JsonConvert.DeserializeObject(Command);
-                try { if(jParams.host != null) pr.DbHost = jParams.host; } catch { }
-                try { if (jParams.port != null) pr.DbPort = jParams.port; } catch { }
-                try { if (jParams.database != null) pr.DbDataBase = jParams.database; } catch { }
-                try { if (jParams.user != null) pr.DbUser = jParams.user; } catch { }
-                try { if (jParams.password != null) pr.DbPassword = jParams.password; } catch { }
-                try { if (jParams.authenticated_user_id != null) pr.AuthenticatedUserId = jParams.authenticated_user_id; } catch { }
+                try { if(jParams.host != null) DbHost = jParams.host; } catch { }
+                try { if (jParams.port != null) DbPort = jParams.port; } catch { }
+                try { if (jParams.database != null) DbDataBase = jParams.database; } catch { }
+                try { if (jParams.user != null) DbUser = jParams.user; } catch { }
+                try { if (jParams.password != null) DbPassword = jParams.password; } catch { }
+                try { if (jParams.authenticated_user_id != null) pr.AuthenticatedUserId = jParams.authenticated_user_id; } catch { pr.AuthenticatedUserId = "1"; }
 
                 try { pr.RedisClientId = jParams.redis_client_id; } catch { }
-                try { pr.MessageId = jParams.message_id; } catch { }
+                try { pr.MessageId = pr.CorrelationId = jParams.message_id; } catch { }
+
                 try { pr.CommandPredicate = jParams.command_predicate; } catch { }
                 try { pr.CommandObjectRepository = jParams.command_object_repository; } catch { }
                 /*
@@ -729,5 +682,23 @@ namespace socisaWorkers
         }
         */
         #endregion
+    }
+
+    public static class ReClasser
+    {
+        public static dynamic FixMeUp<T>(this T fixMe)
+        {
+            var t = fixMe.GetType();
+            var returnClass = new ExpandoObject() as IDictionary<string, object>;
+            foreach (var pr in t.GetProperties())
+            {
+                if(pr.Name != "authenticatedUserId" && pr.Name != "connectionString")
+                {
+                    var val = pr.GetValue(fixMe);
+                    returnClass.Add(pr.Name, val);
+                }
+            }
+            return returnClass;
+        }
     }
 }

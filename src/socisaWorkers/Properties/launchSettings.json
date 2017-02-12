@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"ExportDosarCompletToPdf\\\",\\\"command_object_repository\\\":\\\"DosareRepository\\\",\\\"command_arguments\\\":\\\"1\\\"}\""
+      "commandLineArgs": "\"{\\\"redis_client_id\\\":\\\"test\\\",\\\"command_predicate\\\":\\\"GetAll\\\",\\\"command_object_repository\\\":\\\"AutoRepository\\\"}\""
     }
   }
 }

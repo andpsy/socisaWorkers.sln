@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ErrorMessages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ErrorMessage>
     <ID>1</ID>
@@ -320,7 +320,7 @@
     <ID>45</ID>
     <ERROR_CODE>campInexistentInTabela</ERROR_CODE>
     <ERROR_MESSAGE>Camp inexistent in tabela!</ERROR_MESSAGE>
-    <ERROR_OBJECT></ERROR_OBJECT>
+    <ERROR_OBJECT>ValidareColoane</ERROR_OBJECT>
     <ERROR_TYPE>Critical</ERROR_TYPE>
   </ErrorMessage>
   <ErrorMessage>
@@ -328,6 +328,27 @@
     <ERROR_CODE>cannotConvertStringToTableColumns</ERROR_CODE>
     <ERROR_MESSAGE>Nu am putut converti stringul in campuri din tabela!</ERROR_MESSAGE>
     <ERROR_OBJECT></ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>47</ID>
+    <ERROR_CODE>1451</ERROR_CODE>
+    <ERROR_MESSAGE>Inregistrarea selectata are referinte in alte tabele si nu poate fi stearsa!</ERROR_MESSAGE>
+    <ERROR_OBJECT>MySqlException</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>48</ID>
+    <ERROR_CODE>unsupportedFormat</ERROR_CODE>
+    <ERROR_MESSAGE>Format fisier invalid!</ERROR_MESSAGE>
+    <ERROR_OBJECT>ThumbNail</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>49</ID>
+    <ERROR_CODE>unauthorisedUser</ERROR_CODE>
+    <ERROR_MESSAGE>Utilizator neautorizat!</ERROR_MESSAGE>
+    <ERROR_OBJECT>Main</ERROR_OBJECT>
     <ERROR_TYPE>Critical</ERROR_TYPE>
   </ErrorMessage>
 </ErrorMessages>

@@ -45,10 +45,10 @@ namespace socisaWorkers
 
         public NewResponse(response r)
         {
-            this.Message = r.Message;
             this.Result = r.Result;
             this.InsertedId = r.InsertedId;
             this.Error = r.Error;
+            this.Message = r.Status ? null : r.Message; // daca status = succes nu mai populam Message-ul - 19.02
         }
     }
     public class Program

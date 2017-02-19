@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"redis_client_id\\\":\\\"test\\\",\\\"command_predicate\\\":\\\"GetAll\\\",\\\"command_object_repository\\\":\\\"AutoRepository\\\"}\""
+      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"Delete\\\",\\\"command_object_repository\\\":\\\"DocumenteScanateRepository\\\",\\\"command_arguments\\\":\\\"{'ID':29}\\\"}\""
     }
   }
 }

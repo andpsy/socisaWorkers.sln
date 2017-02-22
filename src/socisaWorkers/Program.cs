@@ -32,6 +32,7 @@ namespace socisaWorkers
         public string CorrelationId { get; set; }
         public string RedisClientId { get; set; }
         public string AuthenticatedUserId { get; set; }
+        public string AuthenticatedUser { get; set; }
         public string CommandPredicate { get; set; }
         public string CommandObjectRepository { get; set; }
         public string CommandArguments { get; set; }
@@ -117,9 +118,9 @@ namespace socisaWorkers
                 if (args.Length > 0)
                 {
                     if (args.Length == 1)
-                        pr = GenerateParameters(args[0]);
+                        pr = GenerateParameters(args[0], MySqlConnectionString);
                     else
-                        pr = GenerateParameters(args);
+                        pr = GenerateParameters(args, MySqlConnectionString);
                 }
                 if ((pr.DbDataBase != null && pr.DbDataBase != "") && (pr.DbUser != null && pr.DbUser != "") && (pr.DbPassword != null && pr.DbPassword != ""))
                     MySqlConnectionString = String.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4};", pr.DbHost, pr.DbPort, pr.DbDataBase, pr.DbUser, pr.DbPassword);
@@ -154,14 +155,15 @@ namespace socisaWorkers
                     if (Command != null && Command != "")
                     {
                         Console.Error.Write("\r\nGot Redis command: " + Command);
-                        pr = GenerateParameters(Command);
+                        pr = GenerateParameters(Command, MySqlConnectionString);
                         Console.Error.Write("\r\n\tRedisClientId: " + pr.RedisClientId + "\r\n\tPredicate: " + pr.CommandPredicate + "\r\n\tRepository: " + pr.CommandObjectRepository + "\r\n\tArguments: " + pr.CommandArguments + "\r\n\tMessageId: " + pr.MessageId);
                         Console.Error.Write("\r\n=====================================================\r\n");
                         if (pr.CommandPredicate != "" && pr.CommandObjectRepository != "")
                         {
                             try
                             {
-                                if(pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "")) // unauthorized user
+                                //if(pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "")) // unauthorized user
+                                if (pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "") && (pr.AuthenticatedUser == null || pr.AuthenticatedUser == "")) // unauthorized user
                                 {
                                     Console.Write("\r\nUtilizator neautentificat!\r\n");
                                     if (redis != null) {
@@ -189,7 +191,8 @@ namespace socisaWorkers
                                 {
                                     try
                                     {
-                                        string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                        //string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                        string[] sArgs = pr.CommandArguments.Split(new string[] { CommandArgumentsSeparator }, StringSplitOptions.RemoveEmptyEntries);
                                         //string[] sArgs = GenerateArguments(CommandArguments);
                                         MethodInfo[] mis = repositoryClass.GetType().GetMethods();
                                         foreach (MethodInfo mi in mis)
@@ -215,17 +218,21 @@ namespace socisaWorkers
                                                         var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
                                                         */
                                                         var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
+
+                                                        //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
                                                         JObject jObj = null;
                                                         try
                                                         {
                                                             jObj = JObject.Parse(sArgs[i]);
                                                         }catch { }
-                                                        //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
                                                         if (jObj != null && jObj.Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
                                                             && pr.CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
                                                         {
-                                                            throw new Exception("invalidCastException");
+                                                            //throw new Exception("invalidCastException");
+                                                            methodToRun = repositoryClass.GetType().GetMethod("Update", new Type[] { Type.GetType("System.String") }); // metoda Update(fieldValueCollection)
+                                                            break;
                                                         }
+                                                        // ------------------------------------------------------------------------------------
                                                     }
                                                     catch
                                                     {
@@ -233,24 +240,31 @@ namespace socisaWorkers
                                                     }
                                                     i++;
                                                 }
+                                                if (methodToRun != null) break;
                                                 if (i == pInfos.Length) //all parameters are there
                                                 {
-                                                    Console.Error.Write("Found Multiple Methods: {0}.", mi.Name);
-                                                    Console.Error.Write("\r\n=====================================================\r\n");
                                                     methodToRun = mi;
                                                     break;
                                                 }
                                             }
                                         }
+                                        if (methodToRun != null)
+                                        {
+                                            Console.Error.Write("Found Multiple Methods: {0}.", methodToRun.Name);
+                                            Console.Error.Write("\r\n=====================================================\r\n");
+                                        }
                                     }
                                     catch { }
                                 }
 
+
+                                // Am gasit metoda de executat, acum instantiem parametri si o rulam
                                 ParameterInfo[] pis = methodToRun.GetParameters();
                                 ArrayList lArgs = new ArrayList();
                                 if (pr.CommandArguments != null && pr.CommandArguments.ToString() != "")
                                 {
-                                    string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                    //string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                    string[] sArgs = pr.CommandArguments.Split(new string[] { CommandArgumentsSeparator }, StringSplitOptions.RemoveEmptyEntries);
                                     //string[] sArgs = GenerateArguments(CommandArguments);
                                     if (pis.Length == sArgs.Length)
                                     {
@@ -336,7 +350,8 @@ namespace socisaWorkers
 
         private static string[] GenerateArgs(string ars)
         {
-            return ars.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            //return ars.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            return ars.Split(new string[] { CommandArgumentsSeparator }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         private static string[] GenerateArgs(JObject ars)
@@ -352,15 +367,15 @@ namespace socisaWorkers
             return toReturn;
         }
 
-        private static ParametersResponse GenerateParameters(string[] args)
+        private static ParametersResponse GenerateParameters(string[] args, string connectionString)
         {
             ParametersResponse pr = new ParametersResponse();
-            pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
             foreach (string arg in args)
             {
                 if (arg.ToLower().IndexOf("host") > -1) pr.DbHost = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("port") > -1) pr.DbPort = arg.Split('=')[1];
-                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user_id") < 0 && arg.ToLower().IndexOf("authenticated-user-id") < 0) pr.DbUser = arg.Split('=')[1];
+                //if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user_id") < 0 && arg.ToLower().IndexOf("authenticated-user-id") < 0) pr.DbUser = arg.Split('=')[1];
+                if (arg.ToLower().IndexOf("user") > -1 && arg.ToLower().IndexOf("authenticated_user") < 0 && arg.ToLower().IndexOf("authenticated-user") < 0) pr.DbUser = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("database") > -1) pr.DbDataBase = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("password") > -1) pr.DbPassword = arg.Split('=')[1];
 
@@ -370,16 +385,25 @@ namespace socisaWorkers
                 if (arg.ToLower().IndexOf("command-arguments") > -1 || arg.ToLower().IndexOf("command_arguments") > -1) pr.CommandArguments = arg.Replace("--command_arguments=", "").Replace("--command-arguments=", "");
 
                 if (arg.ToLower().IndexOf("authenticated-user-id") > -1 || arg.ToLower().IndexOf("authenticated_user_id") > -1) pr.AuthenticatedUserId = arg.Split('=')[1];
+                if ((arg.ToLower().IndexOf("authenticated-user") > -1 || arg.ToLower().IndexOf("authenticated_user") > -1) && (arg.ToLower().IndexOf("authenticated_user_id") < 0 && arg.ToLower().IndexOf("authenticated-user-id") < 0)) pr.AuthenticatedUser = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("redis-client-id") > -1 || arg.ToLower().IndexOf("redis_client_id") > -1) pr.RedisClientId = arg.Split('=')[1];
                 if (arg.ToLower().IndexOf("message-id") > -1 || arg.ToLower().IndexOf("message_id") > -1) pr.MessageId = arg.Split('=')[1];
+
+                if (pr.AuthenticatedUser != null && pr.AuthenticatedUserId == null)
+                {
+                    response r = (new UtilizatoriRepository(null, connectionString)).Find(pr.AuthenticatedUser);
+                    if (r.Status)
+                        pr.AuthenticatedUserId = ((Utilizator)r.Result).ID.ToString();
+                }
+
+                if (pr.AuthenticatedUserId == null) pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
             }
             return pr;
         }
 
-        private static ParametersResponse GenerateParameters(string Command)
+        private static ParametersResponse GenerateParameters(string Command, string connectionString)
         {
             ParametersResponse pr = new ParametersResponse();
-            pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
             try
             {
                 dynamic jParams = JsonConvert.DeserializeObject(Command);
@@ -389,6 +413,7 @@ namespace socisaWorkers
                 try { if (jParams.user != null) pr.DbUser = jParams.user; } catch { }
                 try { if (jParams.password != null) pr.DbPassword = jParams.password; } catch { }
                 try { if (jParams.authenticated_user_id != null) pr.AuthenticatedUserId = jParams.authenticated_user_id; } catch { }
+                try { if (jParams.authenticated_user != null) pr.AuthenticatedUser = jParams.authenticated_user; } catch { }
 
                 try { pr.RedisClientId = jParams.redis_client_id; } catch { }
                 try { pr.MessageId = jParams.message_id; } catch { }
@@ -409,12 +434,22 @@ namespace socisaWorkers
                     string x = jParams.command_arguments.GetType().FullName;
                     bool tmp = x.IndexOf("System.String") > -1 || x.IndexOf("Linq.JValue") > -1;
                     pr.CommandArguments = tmp ? jParams.command_arguments : JsonConvert.SerializeObject(jParams.command_arguments); } catch { }
+
+                if (pr.AuthenticatedUser != null && pr.AuthenticatedUserId == null)
+                {
+                    response r = (new UtilizatoriRepository(null, connectionString)).Find(pr.AuthenticatedUser);
+                    if (r.Status)
+                        pr.AuthenticatedUserId = ((Utilizator)r.Result).ID.ToString();
+                }
+
+                if(pr.AuthenticatedUserId == null) pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
+
                 return pr;
             }
             catch
             {
                 string[] args = Command.Split(' ');
-                return GenerateParameters(args);
+                return GenerateParameters(args, connectionString);
             }
         }
 

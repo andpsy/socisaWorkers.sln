@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"Delete\\\",\\\"command_object_repository\\\":\\\"DocumenteScanateRepository\\\",\\\"command_arguments\\\":\\\"{'ID':29}\\\"}\""
+      "commandLineArgs": "\"{\\\"authenticated_user\\\":\\\"popescu.cristian@gmail.com\\\",\\\"command_predicate\\\":\\\"GetAll\\\",\\\"command_object_repository\\\":\\\"ActionsRepository\\\"}\""
     }
   }
 }

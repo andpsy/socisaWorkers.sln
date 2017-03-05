@@ -46,7 +46,18 @@ namespace socisaWorkers
 
         public NewResponse(response r)
         {
+            this.Status = r.Status;
             this.Result = r.Result;
+            if (this.Result != null)
+            {
+                PropertyInfo[] pis = this.Result.GetType().GetProperties();
+                foreach (PropertyInfo pi in pis)
+                {
+                    if (pi.Name.IndexOf("FILE_CONTENT") > -1) pi.SetValue(this.Result, null);
+                    if (pi.Name.IndexOf("SMALL_ICON") > -1) pi.SetValue(this.Result, null);
+                    if (pi.Name.IndexOf("MEDIUM_ICON") > -1) pi.SetValue(this.Result, null);
+                }
+            }
             this.InsertedId = r.InsertedId;
             this.Error = r.Error;
             this.Message = r.Status ? null : r.Message; // daca status = succes nu mai populam Message-ul - 19.02
@@ -72,7 +83,8 @@ namespace socisaWorkers
         */
         static string CommandArgumentsSeparator = "***";
         static string ScansFolder = "scans";
-        static string PdfsFolder = "pdf";
+        static string PdfsFolder = "pdfs";
+        static string LogsFolder = "logs";
         static Dictionary<string, string> FullyQualifiedNames = new Dictionary<string, string>();
 
         public static void Main(string[] args)
@@ -108,8 +120,10 @@ namespace socisaWorkers
             PdfsFolder = result.PdfsFolder;
             /* ****************************************************** */
 
-            Console.Error.WriteLine(MySqlConnectionString);
-            Console.Error.Write("\r\n=====================================================\r\n");
+            //Console.Error.WriteLine(MySqlConnectionString);
+            //Console.Error.Write("\r\n=====================================================\r\n");
+            LogWriter.Log(String.Format("\r\n{0}>> MySqlConnectionString: {1}", DateTime.Now.ToString(), MySqlConnectionString), "Console.log");
+            LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
             //Console.Error.Write("Command: " + String.Join(" ", args));
             //Console.Error.Write("\r\n=====================================================\r\n");
             try
@@ -135,8 +149,11 @@ namespace socisaWorkers
                     //redis = OpenRedisConnection(ip).GetDatabase();
                 }
                 catch(Exception exp) {
-                    Console.Error.Write(exp.ToString());
-                    Console.Error.Write("\r\n------------------------------------------------------\r\n");
+                    //Console.Error.Write(exp.ToString());
+                    //Console.Error.Write("\r\n------------------------------------------------------\r\n");
+                    LogWriter.Log(String.Format("\r\n{0}>> {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
+                    LogWriter.Log(String.Format("\r\n{0}>> {1}", DateTime.Now.ToString(), "\r\n------------------------------------------------------\r\n"), "Console.log");
+
                 }
                 //now start listening to Redis
                 while (true)
@@ -154,180 +171,213 @@ namespace socisaWorkers
 
                     if (Command != null && Command != "")
                     {
-                        Console.Error.Write("\r\nGot Redis command: " + Command);
+                        //Console.Error.Write("\r\nGot Redis command: " + Command);
+                        LogWriter.Log(String.Format("\r\n{0}>> Got Redis command: {1}", DateTime.Now.ToString(), Command), "Console.log");
                         pr = GenerateParameters(Command, MySqlConnectionString);
-                        Console.Error.Write("\r\n\tRedisClientId: " + pr.RedisClientId + "\r\n\tPredicate: " + pr.CommandPredicate + "\r\n\tRepository: " + pr.CommandObjectRepository + "\r\n\tArguments: " + pr.CommandArguments + "\r\n\tMessageId: " + pr.MessageId);
-                        Console.Error.Write("\r\n=====================================================\r\n");
+                        //Console.Error.Write("\r\n\tRedisClientId: " + pr.RedisClientId + "\r\n\tPredicate: " + pr.CommandPredicate + "\r\n\tRepository: " + pr.CommandObjectRepository + "\r\n\tArguments: " + pr.CommandArguments + "\r\n\tMessageId: " + pr.MessageId);
+                        //Console.Error.Write("\r\n=====================================================\r\n");
+                        LogWriter.Log(String.Format("\r\n{0}>> \r\n\tRedisClientId: {1} \r\n\tPredicate: {2} \r\n\tRepository: {3} \r\n\tArguments: {4} \r\n\tMessageId: {5}", DateTime.Now.ToString(), pr.RedisClientId, pr.CommandPredicate, pr.CommandObjectRepository, pr.CommandArguments, pr.MessageId), "Console.log");
+                        LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
+
+
                         if (pr.CommandPredicate != "" && pr.CommandObjectRepository != "")
                         {
                             try
                             {
-                                //if(pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "")) // unauthorized user
-                                if (pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "") && (pr.AuthenticatedUser == null || pr.AuthenticatedUser == "")) // unauthorized user
+                                //if (pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "") && (pr.AuthenticatedUser == null || pr.AuthenticatedUser == "")) // unauthorized user
+                                if (pr.CommandPredicate != "Login" && (pr.AuthenticatedUserId == null || pr.AuthenticatedUserId == "")) // unauthorized user
                                 {
-                                    Console.Write("\r\nUtilizator neautentificat!\r\n");
-                                    if (redis != null) {
-                                        Error err = ErrorParser.ErrorMessage("unauthorisedUser");
-                                        response rt = new response(false, err.ERROR_MESSAGE, null, null, new List<Error>() { err });
-                                        NewResponse nrt = new NewResponse(rt);
-                                        nrt.RedisClientId = pr.RedisClientId;
-                                        nrt.MessageId = nrt.CorrelationId = pr.MessageId;
+                                    //Console.Write("\r\nUtilizator neautentificat!\r\n");
+                                    LogWriter.Log(String.Format("\r\n{0}>> Utilizator neautentificat!", DateTime.Now.ToString()), "Console.log");
+                                    LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
+                                    Error err = ErrorParser.ErrorMessage("unauthorisedUser");
+                                    response rt = new response(false, err.ERROR_MESSAGE, null, null, new List<Error>() { err });
+                                    NewResponse nrt = new NewResponse(rt);
+                                    nrt.RedisClientId = pr.RedisClientId;
+                                    nrt.MessageId = nrt.CorrelationId = pr.MessageId;
+                                    if (redis != null)
+                                    {
                                         redis.ListRightPushAsync(pr.RedisClientId, JsonConvert.SerializeObject(nrt));
-                                        return;
                                     }
+                                    //return; // se inchide tot containerul daca il las activ
                                 }
-                                Type T = Type.GetType(FullyQualifiedNames[pr.CommandObjectRepository]);
-                                var repositoryClass = Activator.CreateInstance(T, new object[] { Convert.ToInt32(pr.AuthenticatedUserId), MySqlConnectionString });
-                                //MethodInfo mi = repositoryClass.GetType().GetMethod(CommandPredicate);
-                                //get the wright method to run:
-                                MethodInfo methodToRun = null;
-                                try
+                                else
                                 {
-                                    methodToRun = repositoryClass.GetType().GetMethod(pr.CommandPredicate);
-                                    Console.Error.Write("Found Single Method: {0}.", methodToRun.Name);
-                                    Console.Error.Write("\r\n=====================================================\r\n");
-                                }
-                                catch //there are more methods with the same name, but different parameters
-                                {
+                                    Type T = Type.GetType(FullyQualifiedNames[pr.CommandObjectRepository]);
+                                    var repositoryClass = Activator.CreateInstance(T, new object[] { Convert.ToInt32(pr.AuthenticatedUserId), MySqlConnectionString });
+                                    //MethodInfo mi = repositoryClass.GetType().GetMethod(CommandPredicate);
+                                    //get the wright method to run:
+                                    MethodInfo methodToRun = null;
                                     try
+                                    {
+                                        methodToRun = repositoryClass.GetType().GetMethod(pr.CommandPredicate);
+                                        //Console.Error.Write("Found Single Method: {0}.", methodToRun.Name);
+                                        //Console.Error.Write("\r\n=====================================================\r\n");
+                                        LogWriter.Log(String.Format("\r\n{0}>> Found Single Method: {1}", DateTime.Now.ToString(), methodToRun.Name), "Console.log");
+                                        LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
+                                    }
+                                    catch //there are more methods with the same name, but different parameters
+                                    {
+                                        try
+                                        {
+                                            //string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                            string[] sArgs = pr.CommandArguments.Split(new string[] { CommandArgumentsSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                                            //string[] sArgs = GenerateArguments(CommandArguments);
+                                            MethodInfo[] mis = repositoryClass.GetType().GetMethods();
+                                            foreach (MethodInfo mi in mis)
+                                            {
+                                                if (mi.Name == pr.CommandPredicate && mi.GetParameters().Length == sArgs.Length)
+                                                {
+                                                    //now we analyze the parameters types
+                                                    ParameterInfo[] pInfos = mi.GetParameters();
+                                                    int i = 0;
+                                                    while (i < pInfos.Length)
+                                                    {
+                                                        T = pInfos[i].ParameterType;
+                                                        try
+                                                        {
+                                                            /*
+                                                            JsonSerializerSettings S = new JsonSerializerSettings();
+                                                            S.StringEscapeHandling = StringEscapeHandling.Default;
+                                                            S.ObjectCreationHandling = ObjectCreationHandling.Auto;
+                                                            S.MissingMemberHandling = MissingMemberHandling.Error;
+                                                            S.MetadataPropertyHandling = MetadataPropertyHandling.Default;
+                                                            S.PreserveReferencesHandling = PreserveReferencesHandling.All;
+                                                            S.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full;                                                        
+                                                            var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
+                                                            */
+                                                            var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
+
+                                                            //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
+                                                            JObject jObj = null;
+                                                            try
+                                                            {
+                                                                jObj = JObject.Parse(sArgs[i]);
+                                                            }
+                                                            catch { }
+                                                            if (jObj != null && jObj.Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
+                                                                && pr.CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
+                                                            {
+                                                                //throw new Exception("invalidCastException");
+                                                                methodToRun = repositoryClass.GetType().GetMethod("Update", new Type[] { Type.GetType("System.String") }); // metoda Update(fieldValueCollection)
+                                                                break;
+                                                            }
+                                                            // ------------------------------------------------------------------------------------
+                                                        }
+                                                        catch
+                                                        {
+                                                            break;
+                                                        }
+                                                        i++;
+                                                    }
+                                                    if (methodToRun != null) break;
+                                                    if (i == pInfos.Length) //all parameters are there
+                                                    {
+                                                        methodToRun = mi;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (methodToRun != null)
+                                            {
+                                                //Console.Error.Write("Found Multiple Methods: {0}.", methodToRun.Name);
+                                                //Console.Error.Write("\r\n=====================================================\r\n");
+                                                LogWriter.Log(String.Format("\r\n{0}>> Found Multiple Methods: {1}", DateTime.Now.ToString(), methodToRun.Name), "Console.log");
+                                                LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
+
+                                            }
+                                        }
+                                        catch { }
+                                    }
+
+
+                                    // Am gasit metoda de executat, acum instantiem parametri si o rulam
+                                    ParameterInfo[] pis = methodToRun.GetParameters();
+                                    ArrayList lArgs = new ArrayList();
+                                    if (pr.CommandArguments != null && pr.CommandArguments.ToString() != "")
                                     {
                                         //string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
                                         string[] sArgs = pr.CommandArguments.Split(new string[] { CommandArgumentsSeparator }, StringSplitOptions.RemoveEmptyEntries);
                                         //string[] sArgs = GenerateArguments(CommandArguments);
-                                        MethodInfo[] mis = repositoryClass.GetType().GetMethods();
-                                        foreach (MethodInfo mi in mis)
+                                        if (pis.Length == sArgs.Length)
                                         {
-                                            if (mi.Name == pr.CommandPredicate && mi.GetParameters().Length == sArgs.Length)
+                                            for (int i = 0; i < pis.Length; i++)
                                             {
-                                                //now we analyze the parameters types
-                                                ParameterInfo[] pInfos = mi.GetParameters();
-                                                int i = 0;
-                                                while (i < pInfos.Length)
-                                                {
-                                                    T = pInfos[i].ParameterType;
-                                                    try
-                                                    {
-                                                        /*
-                                                        JsonSerializerSettings S = new JsonSerializerSettings();
-                                                        S.StringEscapeHandling = StringEscapeHandling.Default;
-                                                        S.ObjectCreationHandling = ObjectCreationHandling.Auto;
-                                                        S.MissingMemberHandling = MissingMemberHandling.Error;
-                                                        S.MetadataPropertyHandling = MetadataPropertyHandling.Default;
-                                                        S.PreserveReferencesHandling = PreserveReferencesHandling.All;
-                                                        S.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full;                                                        
-                                                        var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
-                                                        */
-                                                        var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
+                                                T = pis[i].ParameterType;
 
-                                                        //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
-                                                        JObject jObj = null;
+                                                var tmpParam = (T.FullName.IndexOf("System.String") > -1 && (sArgs[i] == null || sArgs[i].ToLower() == "null")) ? null : (T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T));
+                                                try
+                                                {
+                                                    PropertyInfo[] props = tmpParam.GetType().GetProperties();
+                                                    foreach (PropertyInfo prop in props)
+                                                    {
+                                                        if (prop.Name == "authenticatedUserId")
+                                                            prop.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
+                                                        if (prop.Name == "connectionString")
+                                                            prop.SetValue(tmpParam, MySqlConnectionString);
+                                                    }
+                                                    FieldInfo[] fis = tmpParam.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                                                    foreach (FieldInfo fi in fis)
+                                                    {
                                                         try
                                                         {
-                                                            jObj = JObject.Parse(sArgs[i]);
-                                                        }catch { }
-                                                        if (jObj != null && jObj.Count != tmpParameter.GetType().GetProperties().Length // este trimis doar un string cu fielduri, nu tot obiectul
-                                                            && pr.CommandPredicate == "Update") // la insert e ok, dar la update poate sa trimita si ID-ul in json
-                                                        {
-                                                            //throw new Exception("invalidCastException");
-                                                            methodToRun = repositoryClass.GetType().GetMethod("Update", new Type[] { Type.GetType("System.String") }); // metoda Update(fieldValueCollection)
-                                                            break;
+                                                            if (fi.Name.IndexOf("authenticatedUserId") > -1)
+                                                                fi.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
+                                                            if (fi.Name.IndexOf("connectionString") > -1)
+                                                                fi.SetValue(tmpParam, MySqlConnectionString);
                                                         }
-                                                        // ------------------------------------------------------------------------------------
+                                                        catch (Exception exp) {
+                                                            //Console.Error.Write(exp.ToString() + "\r\n");
+                                                            LogWriter.Log(exp);
+                                                            LogWriter.Log(String.Format("\r\n{0}>> Error: {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
+                                                            LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
+                                                        }
                                                     }
-                                                    catch
-                                                    {
-                                                        break;
-                                                    }
-                                                    i++;
                                                 }
-                                                if (methodToRun != null) break;
-                                                if (i == pInfos.Length) //all parameters are there
-                                                {
-                                                    methodToRun = mi;
-                                                    break;
+                                                catch (Exception exp) {
+                                                    //Console.Error.Write(exp.ToString() + "\r\n"); 
+                                                    LogWriter.Log(exp);
+                                                    LogWriter.Log(String.Format("\r\n{0}>> Error: {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
+                                                    LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
                                                 }
+                                                lArgs.Add(tmpParam);
                                             }
                                         }
-                                        if (methodToRun != null)
-                                        {
-                                            Console.Error.Write("Found Multiple Methods: {0}.", methodToRun.Name);
-                                            Console.Error.Write("\r\n=====================================================\r\n");
-                                        }
                                     }
-                                    catch { }
-                                }
 
-
-                                // Am gasit metoda de executat, acum instantiem parametri si o rulam
-                                ParameterInfo[] pis = methodToRun.GetParameters();
-                                ArrayList lArgs = new ArrayList();
-                                if (pr.CommandArguments != null && pr.CommandArguments.ToString() != "")
-                                {
-                                    //string[] sArgs = pr.CommandArguments.Split(CommandArgumentsSeparator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                                    string[] sArgs = pr.CommandArguments.Split(new string[] { CommandArgumentsSeparator }, StringSplitOptions.RemoveEmptyEntries);
-                                    //string[] sArgs = GenerateArguments(CommandArguments);
-                                    if (pis.Length == sArgs.Length)
+                                    /*
+                                    var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
+                                    try
                                     {
-                                        for (int i = 0; i < pis.Length; i++)
-                                        {
-                                            T = pis[i].ParameterType;
-
-                                            var tmpParam = (T.FullName.IndexOf("System.String") > -1 && (sArgs[i] == null || sArgs[i].ToLower() == "null")) ? null : (T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T));
-                                            try
-                                            {
-                                                PropertyInfo[] props = tmpParam.GetType().GetProperties();
-                                                foreach (PropertyInfo prop in props)
-                                                {
-                                                    if (prop.Name == "authenticatedUserId")
-                                                        prop.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
-                                                    if (prop.Name == "connectionString")
-                                                        prop.SetValue(tmpParam, MySqlConnectionString);
-                                                }
-                                                FieldInfo[] fis = tmpParam.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-                                                foreach (FieldInfo fi in fis)
-                                                {
-                                                    try
-                                                    {
-                                                        if (fi.Name.IndexOf("authenticatedUserId") > -1)
-                                                            fi.SetValue(tmpParam, Convert.ToInt32(pr.AuthenticatedUserId));
-                                                        if (fi.Name.IndexOf("connectionString") > -1)
-                                                            fi.SetValue(tmpParam, MySqlConnectionString);
-                                                    }
-                                                    catch (Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
-                                                }
-                                            }
-                                            catch(Exception exp) { Console.Error.Write(exp.ToString() + "\r\n"); }
-                                            lArgs.Add(tmpParam);
-                                        }
+                                        //((IDictionary<String, Object>)r).Remove("authenticatedUserId");
+                                        //((IDictionary<String, Object>)r).Remove("connectionString");
+                                        var ret = r.FixMeUp();
+                                        Console.Error.Write(JsonConvert.SerializeObject(ret));
                                     }
-                                }
+                                    catch (Exception exp) { exp.ToString(); }
+                                    */
+                                    //dynamic r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
+                                    var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
+                                    NewResponse nr = new NewResponse((response)r);
+                                    nr.RedisClientId = pr.RedisClientId;
+                                    nr.MessageId = nr.CorrelationId = pr.MessageId;
 
-                                /*
-                                var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                try
-                                {
-                                    //((IDictionary<String, Object>)r).Remove("authenticatedUserId");
-                                    //((IDictionary<String, Object>)r).Remove("connectionString");
-                                    var ret = r.FixMeUp();
-                                    Console.Error.Write(JsonConvert.SerializeObject(ret));
-                                }
-                                catch (Exception exp) { exp.ToString(); }
-                                */
-                                //dynamic r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                var r = methodToRun.Invoke(repositoryClass, lArgs.Count > 0 ? lArgs.ToArray() : null);
-                                NewResponse nr = new NewResponse((response)r);
-                                nr.RedisClientId = pr.RedisClientId;
-                                nr.MessageId = nr.CorrelationId = pr.MessageId;
+                                    string toReturn = JsonConvert.SerializeObject(nr);
+                                    //Console.Error.Write(toReturn);
+                                    LogWriter.Log(String.Format("\r\n{0}>> {1}", DateTime.Now.ToString(), toReturn), "Console.log");
+                                    LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
 
-                                string toReturn = JsonConvert.SerializeObject(nr);
-                                Console.Error.Write(toReturn);
-                                //redis.ListRightPushAsync("Results", toReturn);
-                                redis.ListRightPushAsync(pr.RedisClientId, toReturn);
+                                    //redis.ListRightPushAsync("Results", toReturn);
+                                    redis.ListRightPushAsync(pr.RedisClientId, toReturn);
+                                }
                             }
                             catch (Exception exp)
                             {
-                                Console.Error.Write(exp.ToString());
-                                Console.Error.Write("\r\n=====================================================\r\n");
+                                //Console.Error.Write(exp.ToString());
+                                //Console.Error.Write("\r\n=====================================================\r\n");
+                                LogWriter.Log(exp);
+                                LogWriter.Log(String.Format("\r\n{0}>> Error: {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
+                                LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
                             }
                         }
                     }
@@ -336,11 +386,16 @@ namespace socisaWorkers
                 }
             }
             catch(Exception exp) {
-                Console.Error.Write(exp.ToString());
-                Console.Error.Write("\r\n=====================================================\r\n");
+                //Console.Error.Write(exp.ToString());
+                //Console.Error.Write("\r\n=====================================================\r\n");
+                LogWriter.Log(exp);
+                LogWriter.Log(String.Format("\r\n{0}>> Error: {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
+                LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
             }
-            Console.Error.Write("Command run without errors.");
-            Console.Error.Write("\r\n\r\n ***************************************************************\r\n\r\n");
+            //Console.Error.Write("Command run without errors.");
+            //Console.Error.Write("\r\n\r\n ***************************************************************\r\n\r\n");
+            LogWriter.Log(String.Format("\r\n{0}>> Command run without errors.", DateTime.Now.ToString()), "Console.log");
+            LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
         }
 
         private static string[] GenerateArguments(object ars) {
@@ -396,7 +451,7 @@ namespace socisaWorkers
                         pr.AuthenticatedUserId = ((Utilizator)r.Result).ID.ToString();
                 }
 
-                if (pr.AuthenticatedUserId == null) pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
+                //if (pr.AuthenticatedUserId == null) pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
             }
             return pr;
         }
@@ -442,7 +497,7 @@ namespace socisaWorkers
                         pr.AuthenticatedUserId = ((Utilizator)r.Result).ID.ToString();
                 }
 
-                if(pr.AuthenticatedUserId == null) pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
+                //if(pr.AuthenticatedUserId == null) pr.AuthenticatedUserId = "1"; // to change after Authentication implementation !!!
 
                 return pr;
             }

@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"authenticated_user\\\":\\\"popescu.cristian@gmail.com\\\",\\\"command_predicate\\\":\\\"GetAll\\\",\\\"command_object_repository\\\":\\\"ActionsRepository\\\"}\""
+      "commandLineArgs": "\"{'command_predicate':'Insert','command_object_repository':'DosareRepository','command_arguments':{'DATA_EVENIMENT':'2017-02-28T22:00:00.000Z','DATA_SCA':null,'DATA_IESIRE_CASCO':null,'DATA_INTRARE_RCA':null,'ID_ASIGURAT_CASCO':5353,'ID_AUTO_CASCO':7878,'ID_AUTO_RCA':8512,'ID_SOCIETATE_CASCO':2,'ID_SOCIETATE_RCA':3,'NR_DOSAR_CASCO':'AA89989898','ID_ASIGURAT_RCA':94,'NR_POLITA_CASCO':'KK989888776','NR_POLITA_RCA':'HH888u8u8u8u8u','VALOARE_DAUNA':null,'VALOARE_REGRES':444},'message_id':'b2260eee-4fed-438a-a5de-df982ae894f1','redis_client_id':'b2260eee-4fed-438a-a5de-df982ae894f1','authenticated_user':'popescu.cristian@gmail.com'}\""
     }
   }
 }

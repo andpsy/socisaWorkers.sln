@@ -351,4 +351,25 @@
     <ERROR_OBJECT>Main</ERROR_OBJECT>
     <ERROR_TYPE>Critical</ERROR_TYPE>
   </ErrorMessage>
+  <ErrorMessage>
+    <ID>50</ID>
+    <ERROR_CODE>1169</ERROR_CODE>
+    <ERROR_MESSAGE>Exista un {1} cu aceeasi denumire in baza de date!</ERROR_MESSAGE>
+    <ERROR_OBJECT>{1}</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>51</ID>
+    <ERROR_CODE>emptyDataEveniment</ERROR_CODE>
+    <ERROR_MESSAGE>Nu ati completat Data evenimentului!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DosareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>52</ID>
+    <ERROR_CODE>societateExistenta</ERROR_CODE>
+    <ERROR_MESSAGE>Societate existenta in baza de date!</ERROR_MESSAGE>
+    <ERROR_OBJECT>SocietatiAsigurareJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
 </ErrorMessages>

@@ -61,6 +61,12 @@
 		"Active":true
   	},  
 	{
+		"FieldName":"DATA_EVENIMENT",
+		"ValidationType":"Mandatory",
+		"ErrorCode":"emptyDataEveniment",
+		"Active":true
+  	},   	
+	{
 		"FieldName":"ID_ASIGURAT_RCA",
 		"ValidationType":"Confirmation",
 		"ErrorCode":"emptyAsiguratRca",
@@ -71,5 +77,57 @@
 		"ValidationType":"Duplicate",
 		"ErrorCode":"dosarExistent",
 		"Active":true
+  	}],
+  "documente_scanate": [
+  	{
+  		"FieldName":"DENUMIRE_FISIER",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyDenumireFisier",
+  		"Active":true
+  	}],
+  "asigurati": [
+  	{
+  		"FieldName":"DENUMIRE",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyDenumireAsigurat",
+  		"Active":true
+  	}],
+  "auto": [
+  	{
+  		"FieldName":"NR_AUTO",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyNrAuto",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"SERIE_SASIU",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptySerieSasiuAuto",
+  		"Active":true
+  	}],
+  "societati_asigurare": [
+  	{
+  		"FieldName":"DENUMIRE_SCURTA",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyDenumireScurtaSocietate",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"DENUMIRE",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyDenumireSocietate",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"CUI",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyCuiSocietate",
+  		"Active":true
+  	},  	
+  	{
+  		"FieldName":"DENUMIRE_SCURTA",
+  		"ValidationType":"Duplicate",
+  		"ErrorCode":"societateExistenta",
+  		"Active":true
   	}]
 }

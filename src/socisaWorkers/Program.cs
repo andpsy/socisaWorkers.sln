@@ -50,12 +50,34 @@ namespace socisaWorkers
             this.Result = r.Result;
             if (this.Result != null)
             {
-                PropertyInfo[] pis = this.Result.GetType().GetProperties();
-                foreach (PropertyInfo pi in pis)
+                if (this.Result is Array)
                 {
-                    if (pi.Name.IndexOf("FILE_CONTENT") > -1) pi.SetValue(this.Result, null);
-                    if (pi.Name.IndexOf("SMALL_ICON") > -1) pi.SetValue(this.Result, null);
-                    if (pi.Name.IndexOf("MEDIUM_ICON") > -1) pi.SetValue(this.Result, null);
+                    foreach (object x in (Array)this.Result)
+                    {
+                        PropertyInfo[] pis = x.GetType().GetProperties();
+                        foreach (PropertyInfo pi in pis)
+                        {
+                            if (pi.Name.IndexOf("FILE_CONTENT") > -1)
+                                pi.SetValue(x, null);
+                            if (pi.Name.IndexOf("SMALL_ICON") > -1)
+                                pi.SetValue(x, null);
+                            if (pi.Name.IndexOf("MEDIUM_ICON") > -1)
+                                pi.SetValue(x, null);
+                        }
+                    }
+                }
+                else
+                {
+                    PropertyInfo[] pis = this.Result.GetType().GetProperties();
+                    foreach (PropertyInfo pi in pis)
+                    {
+                        if (pi.Name.IndexOf("FILE_CONTENT") > -1)
+                            pi.SetValue(this.Result, null);
+                        if (pi.Name.IndexOf("SMALL_ICON") > -1)
+                            pi.SetValue(this.Result, null);
+                        if (pi.Name.IndexOf("MEDIUM_ICON") > -1)
+                            pi.SetValue(this.Result, null);
+                    }
                 }
             }
             this.InsertedId = r.InsertedId;
@@ -501,8 +523,9 @@ namespace socisaWorkers
 
                 return pr;
             }
-            catch
+            catch(Exception exp)
             {
+                LogWriter.Log(exp);
                 string[] args = Command.Split(' ');
                 return GenerateParameters(args, connectionString);
             }

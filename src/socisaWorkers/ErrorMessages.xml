@@ -372,4 +372,25 @@
     <ERROR_OBJECT>SocietatiAsigurareJson</ERROR_OBJECT>
     <ERROR_TYPE>Critical</ERROR_TYPE>
   </ErrorMessage>
+  <ErrorMessage>
+    <ID>53</ID>
+    <ERROR_CODE>actiuneExistenta</ERROR_CODE>
+    <ERROR_MESSAGE>Actiune existenta in baza de date!</ERROR_MESSAGE>
+    <ERROR_OBJECT>ActionJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>54</ID>
+    <ERROR_CODE>dreptExistent</ERROR_CODE>
+    <ERROR_MESSAGE>Drept existent in baza de date!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DrepturiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
+  <ErrorMessage>
+    <ID>55</ID>
+    <ERROR_CODE>intervenientExistent</ERROR_CODE>
+    <ERROR_MESSAGE>Intervenient existent in baza de date!</ERROR_MESSAGE>
+    <ERROR_OBJECT>IntervenientiJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>
 </ErrorMessages>

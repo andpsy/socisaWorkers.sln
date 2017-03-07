@@ -129,5 +129,50 @@
   		"ValidationType":"Duplicate",
   		"ErrorCode":"societateExistenta",
   		"Active":true
+  	}],
+  "actions": [
+  	{
+  		"FieldName":"NAME",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyNumeActiune",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"ACTION",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyAction",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"NAME",
+  		"ValidationType":"Duplicate",
+  		"ErrorCode":"actiuneExistenta",
+  		"Active":true
+  	}],
+  "drepturi": [
+  	{
+  		"FieldName":"DENUMIRE",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyDenumireDrept",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"DENUMIRE",
+  		"ValidationType":"Duplicate",
+  		"ErrorCode":"dreptExistent",
+  		"Active":true
+  	}],
+  "intervenienti": [
+  	{
+  		"FieldName":"DENUMIRE",
+  		"ValidationType":"Mandatory",
+  		"ErrorCode":"emptyDenumireIntervenient",
+  		"Active":true
+  	},
+  	{
+  		"FieldName":"DENUMIRE",
+  		"ValidationType":"Duplicate",
+  		"ErrorCode":"intervenientExistent",
+  		"Active":true
   	}]
 }

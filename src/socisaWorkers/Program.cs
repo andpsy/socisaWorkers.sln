@@ -107,6 +107,7 @@ namespace socisaWorkers
         static string ScansFolder = "scans";
         static string PdfsFolder = "pdfs";
         static string LogsFolder = "logs";
+        static string SettingsFolder = "settings";
         static Dictionary<string, string> FullyQualifiedNames = new Dictionary<string, string>();
 
         public static void Main(string[] args)
@@ -389,6 +390,8 @@ namespace socisaWorkers
                                     LogWriter.Log(String.Format("\r\n{0}>> {1}", DateTime.Now.ToString(), toReturn), "Console.log");
                                     LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
 
+                                    LogAction(MySqlConnectionString, pr, (response)r);
+
                                     //redis.ListRightPushAsync("Results", toReturn);
                                     redis.ListRightPushAsync(pr.RedisClientId, toReturn);
                                 }
@@ -418,6 +421,41 @@ namespace socisaWorkers
             //Console.Error.Write("\r\n\r\n ***************************************************************\r\n\r\n");
             LogWriter.Log(String.Format("\r\n{0}>> Command run without errors.", DateTime.Now.ToString()), "Console.log");
             LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
+        }
+
+        private static void LogAction(string MysqlConnectionString, ParametersResponse pr, response r)
+        {
+            try
+            {
+                MySql.Data.MySqlClient.MySqlConnection con = new MySql.Data.MySqlClient.MySqlConnection(MysqlConnectionString);
+                MySql.Data.MySqlClient.MySqlCommand com = new MySql.Data.MySqlClient.MySqlCommand();
+                com.Connection = con;
+                com.CommandType = System.Data.CommandType.StoredProcedure;
+                com.CommandText = "ACTIONS_LOGsp_insert";
+                com.Parameters.AddWithValue("_AUTHENTICATED_USER", pr.AuthenticatedUser);
+                com.Parameters.AddWithValue("_AUTHENTICATED_USER_ID", pr.AuthenticatedUserId);
+                com.Parameters.AddWithValue("_REDIS_CLIENT_ID", pr.RedisClientId);
+                com.Parameters.AddWithValue("_MESSAGE_ID", pr.MessageId);
+                com.Parameters.AddWithValue("_CORRELATION_ID", pr.CorrelationId);
+                com.Parameters.AddWithValue("_COMMAND_PREDICATE", pr.CommandPredicate);
+                com.Parameters.AddWithValue("_COMMAND_OBJECT_REPOSITORY", pr.CommandObjectRepository);
+                com.Parameters.AddWithValue("_COMMAND_ARGUMENTS", pr.CommandArguments);
+                com.Parameters.AddWithValue("_DATA", DateTime.Now);
+                com.Parameters.AddWithValue("_STATUS", r.Status);
+                com.Parameters.AddWithValue("_MESSAGE", r.Result == null && !r.Status ? r.Message : null);
+                com.Parameters.AddWithValue("_RESULT", r.Result == null ? null : JsonConvert.SerializeObject(r.Result));
+                com.Parameters.AddWithValue("_INSERTED_ID", r.InsertedId);
+                com.Parameters.AddWithValue("_ERRORS", r.Error == null ? null : JsonConvert.SerializeObject(r.Error));
+                MySql.Data.MySqlClient.MySqlParameter _ID = new MySql.Data.MySqlClient.MySqlParameter("_ID", MySql.Data.MySqlClient.MySqlDbType.Int32); _ID.Direction = System.Data.ParameterDirection.Output;
+                com.Parameters.Add(_ID);
+                con.Open();
+                com.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception exp)
+            {
+                LogWriter.Log(exp);
+            }
         }
 
         private static string[] GenerateArguments(object ars) {

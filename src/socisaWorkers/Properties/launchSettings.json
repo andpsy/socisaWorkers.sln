@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"GetChildrens\\\",\\\"command_object_repository\\\":\\\"UtilizatoriRepository\\\",\\\"command_arguments\\\":\\\"3***societati_asigurare\\\",\\\"authenticated_user\\\":\\\"popescu.cristian@gmail.com\\\"}\""
+      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"ExportDosarToPdf\\\",\\\"command_object_repository\\\":\\\"DosareRepository\\\",\\\"command_arguments\\\":\\\"Cerere_despagubire_t1.pdf***1\\\",\\\"authenticated_user\\\":\\\"popescu.cristian@gmail.com\\\"}\""
     }
   }
 }

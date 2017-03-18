@@ -349,7 +349,8 @@ namespace socisaWorkers
                                                             if (fi.Name.IndexOf("connectionString") > -1)
                                                                 fi.SetValue(tmpParam, MySqlConnectionString);
                                                         }
-                                                        catch (Exception exp) {
+                                                        catch (Exception exp)
+                                                        {
                                                             //Console.Error.Write(exp.ToString() + "\r\n");
                                                             LogWriter.Log(exp);
                                                             LogWriter.Log(String.Format("\r\n{0}>> Error: {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
@@ -357,7 +358,8 @@ namespace socisaWorkers
                                                         }
                                                     }
                                                 }
-                                                catch (Exception exp) {
+                                                catch (Exception exp)
+                                                {
                                                     //Console.Error.Write(exp.ToString() + "\r\n"); 
                                                     LogWriter.Log(exp);
                                                     LogWriter.Log(String.Format("\r\n{0}>> Error: {1}", DateTime.Now.ToString(), exp.ToString()), "Console.log");
@@ -394,6 +396,10 @@ namespace socisaWorkers
 
                                     //redis.ListRightPushAsync("Results", toReturn);
                                     redis.ListRightPushAsync(pr.RedisClientId, toReturn);
+
+
+                                    //PortalWS.QuerySoapClient q = new PortalWS.QuerySoapClient(PortalWS.QuerySoapClient.EndpointConfiguration.QuerySoap12);
+                                    //var x = q.CautareDosare2Async("46266/299/2009", null, null, null, null, null, null, null);
                                 }
                             }
                             catch (Exception exp)

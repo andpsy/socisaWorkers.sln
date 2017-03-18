@@ -393,4 +393,11 @@
     <ERROR_OBJECT>IntervenientiJson</ERROR_OBJECT>
     <ERROR_TYPE>Critical</ERROR_TYPE>
   </ErrorMessage>
+  <ErrorMessage>
+    <ID>56</ID>
+    <ERROR_CODE>dosarFaraDocumente</ERROR_CODE>
+    <ERROR_MESSAGE>Dosarul nu are documente scanate atasate!</ERROR_MESSAGE>
+    <ERROR_OBJECT>DocumenteScanateJson</ERROR_OBJECT>
+    <ERROR_TYPE>Critical</ERROR_TYPE>
+  </ErrorMessage>    
 </ErrorMessages>

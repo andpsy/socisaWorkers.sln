@@ -2,7 +2,7 @@
   "profiles": {
     "socisaWorkers": {
       "commandName": "Project",
-      "commandLineArgs": "\"{\\\"command_predicate\\\":\\\"ExportDosarToPdf\\\",\\\"command_object_repository\\\":\\\"DosareRepository\\\",\\\"command_arguments\\\":\\\"Cerere_despagubire_t1.pdf***1\\\",\\\"authenticated_user\\\":\\\"popescu.cristian@gmail.com\\\"}\""
+      "commandLineArgs": "\"{'command_predicate':'CountAll','command_object_repository':'DosareRepository','message_id':'b2260eee-4fed-438a-a5de-df982ae894f1','redis_client_id':'test','authenticated_user':'popescu.cristian@gmail.com'}\""
     }
   }
 }

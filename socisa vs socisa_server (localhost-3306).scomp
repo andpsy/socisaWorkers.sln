@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Devart (www.devart.com), compare document file -->
+<!-- Modifying this generated file will probably render it invalid -->
+<CompareDocument>
+  <Properties>
+    <DatabaseProvider>59f90733-4d68-4fdf-82a7-f0fcbf5460aa</DatabaseProvider>
+    <ProviderVersion>6.1.111.0</ProviderVersion>
+    <SchemaVersion>1.5</SchemaVersion>
+  </Properties>
+  <Source Type="Database">
+    <DataConnection>socisa.localhost</DataConnection>
+    <ConnectionString>User Id=root;Host=localhost;Database=socisa;Character Set=utf8</ConnectionString>
+    <Category>00000000-0000-0000-0000-000000000000</Category>
+    <Schema>socisa</Schema>
+  </Source>
+  <Target Type="Database">
+    <DataConnection>socisa_server.localhost</DataConnection>
+    <ConnectionString>User Id=root;Host=localhost;Database=socisa_server;Character Set=utf8</ConnectionString>
+    <Category>00000000-0000-0000-0000-000000000000</Category>
+    <Schema>socisa_server</Schema>
+  </Target>
+  <GroupType Value="Status" />
+  <Filter Value="0" />
+  <ComparisonOptions>
+    <QuoteObjectNames>false</QuoteObjectNames>
+    <IgnoreCase>false</IgnoreCase>
+    <IgnoreComments>false</IgnoreComments>
+    <IgnoreWhiteSpace>false</IgnoreWhiteSpace>
+    <ForceColumnOrder>true</ForceColumnOrder>
+    <IgnoreForeignKeys>false</IgnoreForeignKeys>
+    <CountColumnsToDropUK>true</CountColumnsToDropUK>
+    <MappingIgnoreSpaces>false</MappingIgnoreSpaces>
+    <MappingIgnoreCase>false</MappingIgnoreCase>
+    <MappingSimilar>false</MappingSimilar>
+    <MappingSimilarPercent xml:space="preserve">80</MappingSimilarPercent>
+    <IgnoreConstraintsNames>false</IgnoreConstraintsNames>
+    <IgnoreObjectNamesInDefinitions>false</IgnoreObjectNamesInDefinitions>
+    <DisableDependencyAnalysis>false</DisableDependencyAnalysis>
+    <IgnoreDefiner>true</IgnoreDefiner>
+    <IgnoreAutoIncrement>true</IgnoreAutoIncrement>
+    <IgnoreAvgRowLength>true</IgnoreAvgRowLength>
+    <IgnoreColumnDefaultValues>false</IgnoreColumnDefaultValues>
+    <IgnoreTableEngine>false</IgnoreTableEngine>
+    <IgnoreStartsClause>false</IgnoreStartsClause>
+    <IgnoreEndsClause>false</IgnoreEndsClause>
+    <SkipEmptyCharset>false</SkipEmptyCharset>
+    <CheckInconsistency>false</CheckInconsistency>
+    <SetDelimiter>true</SetDelimiter>
+    <UseDelimiter>true</UseDelimiter>
+    <TargetDatabaseName xml:space="preserve" />
+    <TargetChangeTracking>false</TargetChangeTracking>
+    <IsTarget>false</IsTarget>
+    <OmitIgnoreOptions>false</OmitIgnoreOptions>
+    <IncludeFilesAndFilegroups>false</IncludeFilesAndFilegroups>
+    <IgnoreMemoryOptimizedProperty>false</IgnoreMemoryOptimizedProperty>
+    <IncludeSetNoExec>true</IncludeSetNoExec>
+    <CompareServerObjects>false</CompareServerObjects>
+    <IgnoreObjectTypeFilter>false</IgnoreObjectTypeFilter>
+  </ComparisonOptions>
+  <ObjectFilter>
+    <Include>Table</Include>
+    <Include>View</Include>
+    <Include>Procedure</Include>
+    <Include>Function</Include>
+    <Include>Trigger</Include>
+    <Include>Event</Include>
+    <Include>Udf</Include>
+  </ObjectFilter>
+  <ModifiedObjects />
+  <SynchronizationOptions>
+    <PropertyValue Name="IncludePrintComments">false</PropertyValue>
+    <PropertyValue Name="ExcludeComments">false</PropertyValue>
+    <PropertyValue Name="BackupDatabase">false</PropertyValue>
+    <PropertyValue Name="CreateBackupFolder">false</PropertyValue>
+    <PropertyValue Name="BackupPathName" xml:space="preserve" />
+    <PropertyValue Name="BackupExtension">false</PropertyValue>
+    <PropertyValue Name="BackupExtensionName" xml:space="preserve">.bak</PropertyValue>
+    <PropertyValue Name="ExecuteAsSingleTransaction">true</PropertyValue>
+    <PropertyValue Name="GenerateScriptHeader">true</PropertyValue>
+    <PropertyValue Name="UseSchemaNamePrefix">false</PropertyValue>
+    <PropertyValue Name="UseSqlExtensionCommands">true</PropertyValue>
+    <PropertyValue Name="AllowDefaultValues">false</PropertyValue>
+    <PropertyValue Name="IncludeUseDatabase">true</PropertyValue>
+    <PropertyValue Name="IgnoreDefiner">true</PropertyValue>
+    <PropertyValue Name="UseUnicode">true</PropertyValue>
+    <PropertyValue Name="CompareUniqueness">false</PropertyValue>
+    <PropertyValue Name="ExcludeDependencies">false</PropertyValue>
+    <PropertyValue Name="CanSqlExecutorAddError">true</PropertyValue>
+    <PropertyValue Name="SynchronizeType">1</PropertyValue>
+    <PropertyValue Name="SynchronizationFileName" xml:space="preserve">C:\Users\AndreiLiviu\Documents\Devart\socisa vs socisa_server (localhost-3306)_20170319-1515.sql</PropertyValue>
+    <PropertyValue Name="SynchronizationEditorFileName" xml:space="preserve" />
+    <PropertyValue Name="OpenScriptInEditor">true</PropertyValue>
+    <PropertyValue Name="RefreshAfterSynchronization">false</PropertyValue>
+    <PropertyValue Name="OpenScriptsFolder">false</PropertyValue>
+    <PropertyValue Name="PureScript">false</PropertyValue>
+    <PropertyValue Name="IsPartOfScript">false</PropertyValue>
+    <PropertyValue Name="IgnoreEncryptionProperty">false</PropertyValue>
+    <PropertyValue Name="UseCommitMode">false</PropertyValue>
+    <PropertyValue Name="CommitPageLength" xml:space="preserve">0</PropertyValue>
+  </SynchronizationOptions>
+  <Mapping />
+</CompareDocument>

@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 //using System.Data;
 //using Xfinium.Pdf;
 //using ImageMagick;
+using System.Globalization;
 
 namespace socisaWorkers
 {
@@ -112,6 +113,12 @@ namespace socisaWorkers
 
         public static void Main(string[] args)
         {
+            CultureInfo culture = new CultureInfo("ro-RO");
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+
             /* *****************************************************
              * deoarece toate definitile tabelelor se afla in libraria externa "socisaDll" ca sa folosim Activator-ul pt. ele 
              * ne trebuie FullQualifiedName; de aceea cream un dictionary cu numele simplu al tipului, respectiv qualified name-ul
@@ -136,9 +143,9 @@ namespace socisaWorkers
 
             /* Get the predefined settings from AppSettings.json file */
             string settings = File.ReadAllText("AppSettings.json");
-            dynamic result = JsonConvert.DeserializeObject(settings);
+            dynamic result = JsonConvert.DeserializeObject(settings, CommonFunctions.JsonDeserializerSettings);
             string MySqlConnectionString = result.MySqlConnectionString;
-            ThumbNailSizes[] tSizes = JsonConvert.DeserializeObject<ThumbNailSizes[]>(result.ThumbNailSizes.ToString());
+            ThumbNailSizes[] tSizes = JsonConvert.DeserializeObject<ThumbNailSizes[]>(result.ThumbNailSizes.ToString(), CommonFunctions.JsonDeserializerSettings);
             ScansFolder = result.ScansFolder;
             PdfsFolder = result.PdfsFolder;
             /* ****************************************************** */
@@ -220,7 +227,7 @@ namespace socisaWorkers
                                     nrt.MessageId = nrt.CorrelationId = pr.MessageId;
                                     if (redis != null)
                                     {
-                                        redis.ListRightPushAsync(pr.RedisClientId, JsonConvert.SerializeObject(nrt));
+                                        redis.ListRightPushAsync(pr.RedisClientId, JsonConvert.SerializeObject(nrt, CommonFunctions.JsonSerializerSettings));
                                     }
                                     //return; // se inchide tot containerul daca il las activ
                                 }
@@ -269,7 +276,7 @@ namespace socisaWorkers
                                                             S.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full;                                                        
                                                             var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, S);
                                                             */
-                                                            var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T);
+                                                            var tmpParameter = T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, CommonFunctions.JsonDeserializerSettings);
 
                                                             //verificare suplimentara pt. cazul Update(json item), Update(string fields din item)
                                                             JObject jObj = null;
@@ -328,7 +335,7 @@ namespace socisaWorkers
                                             {
                                                 T = pis[i].ParameterType;
 
-                                                var tmpParam = (T.FullName.IndexOf("System.String") > -1 && (sArgs[i] == null || sArgs[i].ToLower() == "null")) ? null : (T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T));
+                                                var tmpParam = (T.FullName.IndexOf("System.String") > -1 && (sArgs[i] == null || sArgs[i].ToLower() == "null")) ? null : (T.FullName.IndexOf("System.String") > -1 ? sArgs[i] : JsonConvert.DeserializeObject(sArgs[i], T, CommonFunctions.JsonDeserializerSettings));
                                                 try
                                                 {
                                                     PropertyInfo[] props = tmpParam.GetType().GetProperties();
@@ -377,7 +384,7 @@ namespace socisaWorkers
                                         //((IDictionary<String, Object>)r).Remove("authenticatedUserId");
                                         //((IDictionary<String, Object>)r).Remove("connectionString");
                                         var ret = r.FixMeUp();
-                                        Console.Error.Write(JsonConvert.SerializeObject(ret));
+                                        Console.Error.Write(JsonConvert.SerializeObject(ret, CommonFunctions.JsonSerializerSettings));
                                     }
                                     catch (Exception exp) { exp.ToString(); }
                                     */
@@ -387,7 +394,7 @@ namespace socisaWorkers
                                     nr.RedisClientId = pr.RedisClientId;
                                     nr.MessageId = nr.CorrelationId = pr.MessageId;
 
-                                    string toReturn = JsonConvert.SerializeObject(nr);
+                                    string toReturn = JsonConvert.SerializeObject(nr, CommonFunctions.JsonSerializerSettings);
                                     //Console.Error.Write(toReturn);
                                     LogWriter.Log(String.Format("\r\n{0}>> {1}", DateTime.Now.ToString(), toReturn), "Console.log");
                                     LogWriter.Log(String.Format("\r\n{0}>> =====================================================\r\n", DateTime.Now.ToString()), "Console.log");
@@ -449,9 +456,9 @@ namespace socisaWorkers
                 com.Parameters.AddWithValue("_DATA", DateTime.Now);
                 com.Parameters.AddWithValue("_STATUS", r.Status);
                 com.Parameters.AddWithValue("_MESSAGE", r.Result == null && !r.Status ? r.Message : null);
-                com.Parameters.AddWithValue("_RESULT", r.Result == null ? null : JsonConvert.SerializeObject(r.Result));
+                com.Parameters.AddWithValue("_RESULT", r.Result == null ? null : JsonConvert.SerializeObject(r.Result, CommonFunctions.JsonSerializerSettings));
                 com.Parameters.AddWithValue("_INSERTED_ID", r.InsertedId);
-                com.Parameters.AddWithValue("_ERRORS", r.Error == null ? null : JsonConvert.SerializeObject(r.Error));
+                com.Parameters.AddWithValue("_ERRORS", r.Error == null ? null : JsonConvert.SerializeObject(r.Error, CommonFunctions.JsonSerializerSettings));
                 MySql.Data.MySqlClient.MySqlParameter _ID = new MySql.Data.MySqlClient.MySqlParameter("_ID", MySql.Data.MySqlClient.MySqlDbType.Int32); _ID.Direction = System.Data.ParameterDirection.Output;
                 com.Parameters.Add(_ID);
                 con.Open();
@@ -527,7 +534,7 @@ namespace socisaWorkers
             ParametersResponse pr = new ParametersResponse();
             try
             {
-                dynamic jParams = JsonConvert.DeserializeObject(Command);
+                dynamic jParams = JsonConvert.DeserializeObject(Command, CommonFunctions.JsonDeserializerSettings);
                 try { if(jParams.host != null) pr.DbHost = jParams.host; } catch { }
                 try { if (jParams.port != null) pr.DbPort = jParams.port; } catch { }
                 try { if (jParams.database != null) pr.DbDataBase = jParams.database; } catch { }
@@ -554,7 +561,7 @@ namespace socisaWorkers
                 try {
                     string x = jParams.command_arguments.GetType().FullName;
                     bool tmp = x.IndexOf("System.String") > -1 || x.IndexOf("Linq.JValue") > -1;
-                    pr.CommandArguments = tmp ? jParams.command_arguments : JsonConvert.SerializeObject(jParams.command_arguments); } catch { }
+                    pr.CommandArguments = tmp ? jParams.command_arguments : JsonConvert.SerializeObject(jParams.command_arguments, CommonFunctions.JsonSerializerSettings); } catch { }
 
                 if (pr.AuthenticatedUser != null && pr.AuthenticatedUserId == null)
                 {
